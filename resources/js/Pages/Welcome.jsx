@@ -86,13 +86,13 @@ export default function Welcome({
                 </div>
             </div> */}
             <Home></Home>
-            <OverviewPage populationPerBarangay={populationPerBarangay} />
+            {/* <OverviewPage populationPerBarangay={populationPerBarangay} />
             <AgeGroup
                 ageCategoryData={ageCategoryData}
                 ageDistributionData={ageDistributionData}
             />
             <FamilyIncomePage familyIncomeData={familyIncomeData} />
-            <EmploymentStatusPage employmentStatusData={employmentStatusData} />
+            <EmploymentStatusPage employmentStatusData={employmentStatusData} /> */}
         </>
     );
 }

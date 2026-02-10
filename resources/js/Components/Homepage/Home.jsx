@@ -16,8 +16,8 @@ const letterVariant = {
 const AnimatedText = ({ text }) => (
     <motion.h1
         className="text-[55px] sm:text-6xl md:text-7xl lg:text-[120px] font-extrabold font-montserrat
-               bg-gradient-to-r from-[#0a2a66] via-[#6aa0ff] to-[#0a2a66]
-               bg-clip-text text-transparent drop-shadow-2xl flex justify-center"
+           bg-gradient-to-r from-violet-800 via-violet-400 to-violet-800
+           bg-clip-text text-transparent drop-shadow-2xl flex justify-center"
         initial="hidden"
         animate="visible"
     >
@@ -141,9 +141,9 @@ const Home = ({ populationPerBarangay }) => {
                         animate="visible"
                         transition={{ delay: 0.4 }}
                     >
-                        Barangay Information
+                        Community Risk
                         <br />
-                        Management System
+                        Assessment
                     </motion.p>
 
                     <motion.p
@@ -153,7 +153,7 @@ const Home = ({ populationPerBarangay }) => {
                         animate="visible"
                         transition={{ delay: 0.6 }}
                     >
-                        Empowering Communities Through Digital Innovation
+                        Disaster Risk Reduction and Management System
                     </motion.p>
 
                     <motion.p
@@ -163,8 +163,9 @@ const Home = ({ populationPerBarangay }) => {
                         animate="visible"
                         transition={{ delay: 1 }}
                     >
-                        A centralized system for efficient barangay management
-                        and seamless citizen engagement.
+                        A centralized platform for the City Disaster Risk
+                        Reduction and Management Office to enhance community
+                        risk assessment and barangay disaster preparedness.
                     </motion.p>
                 </section>
 
@@ -173,7 +174,7 @@ const Home = ({ populationPerBarangay }) => {
                     className="absolute left-0 top-1/4 w-[50vw] h-[50vw] max-w-[500px] max-h-[500px] rounded-full opacity-90 -z-10 transform -translate-x-1/2"
                     style={{
                         background:
-                            "radial-gradient(circle, rgba(28, 100, 220, 0.9) 70%, rgba(28, 100, 220, 0.4) 70%, transparent 100%)",
+                            "radial-gradient(circle, rgba(139, 92, 246, 0.9) 70%, rgba(139, 92, 246, 0.4) 70%, transparent 100%)",
                         filter: "blur(100px)",
                     }}
                 ></div>
@@ -182,7 +183,7 @@ const Home = ({ populationPerBarangay }) => {
                     className="absolute right-0 top-0 w-[60vw] h-[60vw] max-w-[500px] max-h-[600px] rounded-full opacity-90 -z-10 transform translate-x-1/2"
                     style={{
                         background:
-                            "radial-gradient(circle, rgba(28, 100, 220, 0.85) 80%, rgba(28, 100, 220, 0.35) 30%, transparent 100%)",
+                            "radial-gradient(circle, rgba(124, 58, 237, 0.85) 80%, rgba(124, 58, 237, 0.35) 30%, transparent 100%)",
                         filter: "blur(100px)",
                     }}
                 ></div>
@@ -192,7 +193,7 @@ const Home = ({ populationPerBarangay }) => {
                     className="absolute top-0 left-1/2 w-[40vw] h-[20vw] max-w-[400px] max-h-[200px] -z-10 transform -translate-x-1/2 rounded-b-full opacity-75"
                     style={{
                         background:
-                            "radial-gradient(circle, rgba(28, 100, 220, 0.6) 0%, rgba(28, 100, 220, 0.15) 100%)",
+                            "radial-gradient(circle, rgba(167, 139, 250, 0.6) 0%, rgba(167, 139, 250, 0.15) 100%)",
                         filter: "blur(80px)",
                     }}
                 ></div>

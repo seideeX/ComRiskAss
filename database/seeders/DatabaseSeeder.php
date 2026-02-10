@@ -73,23 +73,23 @@ class DatabaseSeeder extends Seeder
         $this->call([BarangaySeeder::class]);
 
         // Roles
-        $barangayOfficerRole = Role::firstOrCreate(['name' => 'barangay_officer']);
-        $residentRole = Role::firstOrCreate(['name' => 'resident']);
+        // $barangayOfficerRole = Role::firstOrCreate(['name' => 'barangay_officer']);
+        // $residentRole = Role::firstOrCreate(['name' => 'resident']);
         $superAdminRole = Role::firstOrCreate(['name' => 'super_admin']);
         $cdrrmoRole = Role::firstOrCreate(['name' => 'cdrrmo_admin']);
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
         // System users
-        User::factory()->create([
-            'resident_id' => null,
-            'username' => 'Super Admin',
-            'email' => 'superadmin@example.com',
-            'password' => bcrypt('admin123'),
-            'email_verified_at' => now(),
-            'role' => 'super_admin',
-            'status' => 'active',
-            'is_disabled' => false,
-        ])->assignRole($superAdminRole);
+        // User::factory()->create([
+        //     'resident_id' => null,
+        //     'username' => 'Super Admin',
+        //     'email' => 'superadmin@example.com',
+        //     'password' => bcrypt('admin123'),
+        //     'email_verified_at' => now(),
+        //     'role' => 'super_admin',
+        //     'status' => 'active',
+        //     'is_disabled' => false,
+        // ])->assignRole($superAdminRole);
 
         User::factory()->create([
             'resident_id' => null,
@@ -137,13 +137,13 @@ class DatabaseSeeder extends Seeder
             /**
              * PUROKS & STREETS
              */
-            $puroks = [];
-            for ($i = 1; $i <= 7; $i++) {
-                $puroks[] = Purok::factory()->create([
-                    'barangay_id' => $barangay->id,
-                    'purok_number' => $i,
-                ]);
-            }
+            // $puroks = [];
+            // for ($i = 1; $i <= 7; $i++) {
+            //     $puroks[] = Purok::factory()->create([
+            //         'barangay_id' => $barangay->id,
+            //         'purok_number' => $i,
+            //     ]);
+            // }
 
             // foreach ($puroks as $purok) {
             //     Street::factory(2)->create(['purok_id' => $purok->id]);
@@ -151,14 +151,14 @@ class DatabaseSeeder extends Seeder
         }
 
         // Call lookup/fix seeders
-        $this->call([
-            BarangayDataSeeder::class,
-            ExcelDataSeeder::class,
-            OccupationTypeSeeder::class,
-            //FixHouseholdResidentSeeder::class,
-            // FamilyRelationSeeder::class,
-            BarangayInformationSeeder::class,
-        ]);
+        // $this->call([
+        //     BarangayDataSeeder::class,
+        //     ExcelDataSeeder::class,
+        //     OccupationTypeSeeder::class,
+        //     //FixHouseholdResidentSeeder::class,
+        //     // FamilyRelationSeeder::class,
+        //     BarangayInformationSeeder::class,
+        // ]);
         // $this->call([
         //     CRADataseeder::class,
         // ]);

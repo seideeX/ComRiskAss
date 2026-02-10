@@ -70,21 +70,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', [IBIMSController::class, 'welcome'])->name('welcome'); // Welcome page accessible to both admin and resident
 Route::get('/test-email', [EmailController::class, 'sendPHPMailerEmail']);
-Route::get('/request-certificate', [UnauthenticatedIssuanceController::class, 'makeRequest'])->name('request.certificate');
-Route::get('/request-certificate-documents/{id}', [UnauthenticatedIssuanceController::class, 'fetchDocuments'])->name('request.documents');
-Route::get('/request-certificate-placeholders/{id}', [DocumentController::class, 'fetchPlaceholders'])->name('request.placeholders');
-Route::post('/request-certificate/store', [UnauthenticatedIssuanceController::class, 'store'])->name('request.storerequest');
 Route::get('/getCRA', [CRADataController::class, 'getCRA'])->name('getcra');
 Route::get('/getCRAList', [CRADataController::class, 'getCRAList'])->name('getcralist');
 Route::get('/craProgress', [CRAController::class, 'craProgress'])->name('craProgress');
 Route::patch('/user/{user}/toggle-account', [UserController::class, 'toggleAccount'])->name('user.toggle');
 Route::patch('/barangayofficial/{official}/toggle-status', [BarangayOfficialController::class, 'toggleStatus'])->name('official.toggle');
 
-// axios documents
-Route::get('/document/preview/{id}', [DocumentController::class, 'preview'])->name('document.preview');
-Route::get('/document/fetchdocuments', [DocumentController::class, 'fetchDocuments'])->name('document.fetchdocs');
-Route::get('/document/fetchdocumentpath/{id}', [DocumentController::class, 'fetchDocumentPath'])->name('document.documentpath');
-Route::get('/document/fetchplaceholders/{id}', [DocumentController::class, 'fetchPlaceholders'])->name('document.placeholders');
 Route::get('/test-mail-env', function () {
     return [
         'username' => env('MAIL_USERNAME'),
@@ -94,168 +85,6 @@ Route::get('/test-mail-env', function () {
 
 // Admin-only routes
 Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin'])->group(function () {
-    Route::get('/document/fill/{resident}/{template}', [DocumentGenerationController::class, 'generateFilledDocument'])
-        ->name('document.fill');
-
-    Route::get('certificate/{id}/download', [CertificateController::class, 'download'])->name('certificate.download');
-    Route::get('certificate/{id}/print', [CertificateController::class, 'print'])->name('certificate.print');
-    Route::get('certificate/index', [CertificateController::class, 'index'])->name('certificate.index');
-    Route::post('certificate/store', [CertificateController::class, 'storeFromPost'])->name('certificate.store');
-    Route::get('certificate/export-certificates-excel', [ReportGenerationController::class, 'exportCertificates'])
-        ->name('certificate.export');
-    Route::get('certificate/export-certificates-pdf', [ReportGenerationController::class, 'exportCertificatesPdf'])
-        ->name('certificate.export.pdf');
-    Route::post('/certificate/issue/{id}', [CertificateController::class, 'issue'])
-        ->name('certificate.issue');
-    Route::get('/certificates/pending', [CertificateController::class, 'getPendingCertificates'])->name('certificate.pending');
-    Route::delete('/certificates/deny/{id}', [CertificateController::class, 'denyRequest'])->name('certificate.deny');
-    Route::delete('/certificates/delete/{id}', [CertificateController::class, 'destroy'])->name('certificate.destroy');
-
-    // family
-    Route::get('familytree/{resident}', [ResidentController::class, 'getFamilyTree'])->name('resident.familytree');
-    Route::post('/family-tree/store', [FamilyTreeController::class, 'store'])->name('family_tree.store');
-    Route::get('family/showfamily/{family}', [FamilyController::class, 'showFamily'])->name('family.showfamily');
-    Route::get('family/getfamilydetails/{id}', [FamilyController::class, 'getFamilyDetails'])->name('family.getdetails');
-    Route::get('family/remove/{id}', [FamilyController::class, 'remove'])->name('family.remove');
-    Route::get('/family/residents-members', [FamilyController::class, 'getResidentsAndMembersJson'])
-        ->name('family.residents-members');
-
-    // resident
-    Route::get('resident/createresident', [ResidentController::class, 'createResident'])->name('resident.createresident');
-    Route::post('resident/storehousehold', [ResidentController::class, 'storeHousehold'])->name('resident.storehousehold');
-    Route::get('resident/showresident/{id}', [ResidentController::class, 'showResident'])->name('resident.showresident');
-    Route::get('resident/fetchresidents', [ResidentController::class, 'fetchResidents'])->name('resident.fetchresidents');
-    Route::get('resident/chartdata', [ResidentController::class, 'chartData'])->name('resident.chartdata');
-
-    // barangay
-    Route::get('barangay_management/barangaydetails', [BarangayManagementController::class, 'barangayDetails'])->name('barangay_profile.details');
-    Route::get('barangay_official/officialsinfo/{id}', [BarangayOfficialController::class, 'getOfficialInformation'])->name('barangay_official.info');
-    Route::get('barangay_infrastructure/details/{id}', [BarangayInfrastructureController::class, 'infrastructureDetails'])->name('barangay_infrastructure.details');
-    Route::get('barangay_institution/details/{id}', [BarangayInstitutionController::class, 'institutionDetails'])->name('barangay_institution.details');
-    Route::get('barangay_facility/details/{id}', [BarangayFacilityController::class, 'facilityDetails'])->name('barangay_facility.details');
-    Route::get('barangay_project/details/{id}', [BarangayProjectController::class, 'projectDetails'])->name('barangay_project.details');
-    Route::get('barangay_road/details/{id}', [BarangayRoadController::class, 'roadDetails'])->name('barangay_road.details');
-    Route::get('inventory/details/{id}', [InventoryController::class, 'itemDetails'])->name('inventory.details');
-    Route::get('institution_member/details/{id}', [InstitutionMemberController::class, 'memberDetails'])->name('institution_member.details');
-
-    // household
-    Route::get('household/getlatesthead/{id}', [HouseholdController::class, 'getLatestHead'])->name('household.latesthead');
-    Route::get('household/remove/{id}', [HouseholdController::class, 'remove'])->name('household.remove');
-    Route::get('/household/latest-house-number', [HouseholdController::class, 'getLatestHouseNumber'])
-        ->name('household.latestHouseNumber');
-
-    // senior
-    Route::get('senior_citizen/seniordetails/{id}', [SeniorCitizenController::class, 'seniordetails'])->name('senior_citizen.details');
-
-    // education
-    Route::get('education/history/{id}', [EducationController::class, 'educationHistory'])->name('education.history');
-
-    // occupation
-    Route::get('occupation/details/{id}', [OccupationController::class, 'occupationDetails'])->name('occupation.details');
-
-    // livelihood
-    Route::get('livelihood/details/{id}', [LivelihoodController::class, 'livelihoodDetails'])->name('livelihood.details');
-
-    // vehicle
-    Route::get('vehicle/details/{id}', [VehicleController::class, 'vehicleDetails'])->name('vehicle.details');
-
-    Route::get('water/details/{id}', [WaterController::class, 'waterDetails'])
-    ->name('water.details');
-    Route::get('land/details/{id}', [LandController::class, 'landDetails'])
-    ->name('land.details');
-
-    Route::get('street', [StreetController::class, 'index'])
-    ->name('street.index');
-    Route::post('street/store', [StreetController::class, 'store'])
-    ->name('street.store');
-    Route::put('street/update/{street}', [StreetController::class, 'update'])
-    ->name('street.update');
-    Route::get('street/details/{id}', [StreetController::class, 'streetDetails'])
-    ->name('street.details');
-    Route::delete('street/destroy/{street}', [StreetController::class, 'destroy'])
-    ->name('street.destroy');
-
-
-    // user
-    Route::post('user/confirmpassword', [UserController::class, 'confirmPassword'])->name('user.confirm');
-    Route::get('/user/{id}', [UserController::class, 'accountDetails'])->name('user.details');
-
-    // reports
-    Route::get('report', [ReportGenerationController::class, 'index'])->name('report.index');
-    Route::get('report/export-residents-excel', [ReportGenerationController::class, 'exportResidentWithFilters'])
-        ->name('report.resident');
-    Route::get('report/export-seniorcitizen-excel', [ReportGenerationController::class, 'exportSeniorWithFilters'])
-        ->name('report.seniorcitizen');
-    Route::get('report/export-family-excel', [ReportGenerationController::class, 'exportFamily'])
-        ->name('report.family');
-    Route::get('report/export-familymembers-excel', [ReportGenerationController::class, 'exportFamilyMembers'])
-        ->name('report.familymembers');
-    Route::get('report/export-household-excel', [ReportGenerationController::class, 'exportHousehold'])
-        ->name('report.household');
-    Route::get('report/export-householdmembers-excel', [ReportGenerationController::class, 'exportHouseholdMembers'])
-        ->name('report.householdmembers');
-    Route::get('report/export-vehicles-excel', [ReportGenerationController::class, 'exportVehicles'])
-        ->name('report.vehicles');
-    Route::get('report/export-education-excel', [ReportGenerationController::class, 'exportEducations'])
-        ->name('report.education');
-    Route::get('report/export-occupations-excel', [ReportGenerationController::class, 'exportOccupations'])
-        ->name('report.occupations');
-    Route::get('report/export-blotter-reports-excel', [ReportGenerationController::class, 'exportBlotterReports'])
-        ->name('report.blotter');
-    Route::get('report/export-summon-excel', [ReportGenerationController::class, 'exportSummon'])
-        ->name('report.summon');
-    Route::get('report/export-medical-excel', [ReportGenerationController::class, 'exportMedical'])
-        ->name('report.medical');
-    Route::get('report/export-activity-logs-excel', [ReportGenerationController::class, 'exportActivityLogs'])
-        ->name('report.activitylogs');
-
-    // reports 2.0
-    Route::get('report/export-resident-pdf', [ReportGenerationController::class, 'exportResidentInfoPdf'])
-        ->name('report.resident.pdf');
-    Route::get('report/export-seniorcitizen-pdf', [ReportGenerationController::class, 'exportSeniorCitizensPdf'])
-        ->name('report.seniorcitizen.pdf');
-    Route::get('report/export-family-pdf', [ReportGenerationController::class, 'exportFamilyPdf'])
-        ->name('report.family.pdf');
-    Route::get('report/export-familymembers-pdf', [ReportGenerationController::class, 'exportFamilyMembersPdf'])
-        ->name('report.familymembers.pdf');
-    Route::get('report/export-household-pdf', [ReportGenerationController::class, 'exportHouseholdPdf'])
-        ->name('report.household.pdf');
-    Route::get('report/export-householdmembers-pdf', [ReportGenerationController::class, 'exportHouseholdMembersPdf'])
-        ->name('report.householdmembers.pdf');
-    Route::get('report/export-householdoverview-pdf', [ReportGenerationController::class, 'exportHouseholdOverviewPDF'])
-        ->name('report.householdoverview.pdf');
-    Route::get('report/export-vehicle-pdf', [ReportGenerationController::class, 'exportVehicleInfoPdf'])
-        ->name('report.vehicle.pdf');
-    Route::get('report/export-education-pdf', [ReportGenerationController::class, 'exportEducationalHistoryPdf'])
-        ->name('report.education.pdf');
-    Route::get('report/export-occupations-pdf', [ReportGenerationController::class, 'exportOccupationPdf'])
-        ->name('report.occupations.pdf');
-    Route::get('report/export-medical-pdf', [ReportGenerationController::class, 'exportMedicalInformationPdf'])
-        ->name('report.medical.pdf');
-    Route::get('report/export-blotter-reports-pdf', [ReportGenerationController::class, 'exportBlotterReportsPdf'])
-        ->name('report.blotter.pdf');
-    Route::get('report/export-summon-pdf', [ReportGenerationController::class, 'exportSummonsPdf'])
-        ->name('report.summon.pdf');
-    Route::get('report/export-allergy-pdf', [ReportGenerationController::class, 'exportAllergyPdf'])
-        ->name('report.allergy.pdf');
-    Route::get('report/export-medcondition-pdf', [ReportGenerationController::class, 'exportMedicalConditionPdf'])
-        ->name('report.medcondition.pdf');
-    Route::get('report/export-disabilities-pdf', [ReportGenerationController::class, 'exportDisabilitiesPdf'])
-        ->name('report.disabilities.pdf');
-    Route::get('report/export-medication-pdf', [ReportGenerationController::class, 'exportMedicationsPdf'])
-        ->name('report.medication.pdf');
-    Route::get('report/export-pregnancy-pdf', [ReportGenerationController::class, 'exportPregnancyPdf'])
-        ->name('report.pregnancy.pdf');
-    Route::get('report/export-vaccination-pdf', [ReportGenerationController::class, 'exportVaccinationPdf'])
-        ->name('report.vaccination.pdf');
-    Route::get('report/export-institution-members-pdf/{id}', [ReportGenerationController::class, 'exportMembersPdf'])
-        ->name('report.institution-members.pdf');
-    Route::get('report/export-monitoring-form-pdf', [ReportGenerationController::class, 'exportMonitoringReportPdf'])
-        ->name('report.monitoring-form.pdf');
-
-    // pregnancy
-    Route::get('pregnancy/details/{id}', [PregnancyRecordController::class, 'pregnancyDetails'])->name('pregnancy.details');
-
     // cra
     Route::get('cra/index', [CRAController::class, 'index'])->name('cra.index');
     Route::get('cra/create', [CRAController::class, 'create'])->name('cra.create');
@@ -267,14 +96,6 @@ Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin
     Route::get('/cra/pdf/{id}', [PDFController::class, 'download'])
         ->name('cra.pdf');
 
-
-    // death
-    Route::get('death/index', [DeathController::class, 'index'])->name('death.index');
-    Route::get('death/details/{id}', [DeathController::class, 'deathDetails'])->name('death.details');
-    Route::post('death/store', [DeathController::class, 'store'])->name('death.store');
-    Route::put('death/update/{id}', [DeathController::class, 'update'])->name('death.update');
-    Route::delete('death/destroy/{id}', [DeathController::class, 'destroy'])->name('death.destroy');
-
     Route::post('/check-email-unique', function (Request $request) {
         $request->validate([
             'email' => 'required|email'
@@ -285,59 +106,6 @@ Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin
         return response()->json(['unique' => !$exists]);
     });
 
-    // households
-    Route::get('/overview', [HouseholdController::class, 'householdOverview'])->name('household.overview');
-    Route::get('/export-resident-pdf/{id}', [ResidentController::class, 'exportResidentInfo'])
-    ->name('resident.export.pdf');
-    Route::get('/export-resident-rbi/{id}', [ResidentController::class, 'exportResidentRBI'])
-    ->name('resident.export.rbi');
-    Route::get('/export-household-rbi/{id}', [HouseholdController::class, 'exportHouseholdRBI'])
-    ->name('household.export.rbi');
-
-    // residents
-    Route::resource('activity_log', ActivityLogsController::class);
-    Route::resource('resident', ResidentController::class);
-    Route::resource('document', DocumentController::class);
-    Route::resource('household', HouseholdController::class);
-    Route::resource('senior_citizen', SeniorCitizenController::class);
-    Route::resource('family_relation', FamilyRelationController::class);
-    Route::resource('family', FamilyController::class);
-    Route::resource('vehicle', VehicleController::class);
-    Route::resource('education', EducationController::class);
-    Route::resource('occupation', OccupationController::class);
-    Route::resource('medical', MedicalInformationController::class);
-    Route::resource('livelihood', LivelihoodController::class);
-    Route::resource('medical_condition', ResidentMedicalConditionController::class);
-    Route::resource('medication', ResidentMedicationController::class);
-    Route::resource('vaccination', ResidentVaccinationController::class);
-    Route::resource('disability', DisabilityController::class);
-    Route::resource('allergy', AllergyController::class);
-    Route::resource('pregnancy', PregnancyRecordController::class);
-    Route::resource('child_record', ChildHealthMonitoringController::class);
-    Route::resource('water', WaterController::class);
-    Route::resource('land', LandController::class);
-
-    // Katarungnang Pambarangay
-    Route::get('summon/elevate/{id}', [SummonController::class, 'elevate'])->name('summon.elevate');
-    Route::get('blotter_report/generateform/{id}', [BlotterController::class, 'generateForm'])->name('blotter_report.generateForm');
-    Route::get('summon/generateform/{id}', [SummonController::class, 'generateForm'])->name('summon.generateForm');
-    Route::get('summon/fileaction/{id}', [SummonController::class, 'generateFileAction'])->name('summon.fileaction');
-    Route::get('summon/session/{id}', [SummonController::class, 'sessionDetails'])->name('summon.session.details');
-    Route::post('summon/session/update/{id}', [SummonController::class, 'updateSession'])->name('summon.update.details');
-    Route::delete('summon/session/delete/{id}', [SummonController::class, 'deleteSession'])->name('summon.delete.details');
-    Route::resource('blotter_report', BlotterController::class);
-    Route::resource('case_participant', CaseParticipantController::class);
-    Route::resource('summon', SummonController::class);
-
-    // barangay
-    Route::resource('barangay_official', BarangayOfficialController::class);
-    Route::resource('barangay_project', BarangayProjectController::class);
-    Route::resource('barangay_infrastructure', BarangayInfrastructureController::class);
-    Route::resource('barangay_facility', BarangayFacilityController::class);
-    Route::resource('barangay_road', BarangayRoadController::class);
-    Route::resource('barangay_institution', BarangayInstitutionController::class);
-    Route::resource('inventory', InventoryController::class);
-    Route::resource('institution_member', InstitutionMemberController::class);
 });
 
 Route::middleware(['auth', 'role:barangay_officer'])->group(function () {
@@ -361,6 +129,7 @@ Route::middleware(['auth', 'role:admin|super_admin'])->group(function () {
     Route::resource('user', UserController::class);
 });
 
+// CDRRMO Admin-only routes
 Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(function () {
     Route::get('/dashboard', [CDRRMOAdminController::class, 'index'])
         ->name('cdrrmo_admin.dashboard');
@@ -443,16 +212,6 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super_admin')->group(fu
     Route::get('/statistics/sex-population-summary-export', [SuperAdminDataController::class, 'exportPopulationSummaryBySex'])->name('super_admin.export.sex_population_summary');
     Route::get('/statistics/employment-summary-export', [SuperAdminDataController::class, 'exportEmploymentSummary'])->name('super_admin.export.employment_summary');
 
-});
-// Resident-only routes
-Route::middleware(['auth', 'role:resident'])->prefix('account')->group(function () {
-    Route::get('/dashboard', [ResidentAccountController::class, 'dashboard'])->name('resident_account.dashboard');
-    Route::get('/certificates', [ResidentAccountController::class, 'residentCertificates'])->name('resident_account.certificates');
-    Route::get('/document/fetchplaceholders/{id}', [DocumentController::class, 'fetchPlaceholders'])
-        ->name('resident.document.placeholders');
-    Route::post('/certificate-request', [ResidentAccountController::class, 'requestCertificate'])
-        ->name('resident.certificate.store');
-    Route::delete('/certificate/cancel/{id}', [ResidentAccountController::class, 'destroy'])->name('resident_account.certificate.destroy');
 });
 
 Route::middleware(['auth', 'role:resident|barangay_officer'])->group(function () {

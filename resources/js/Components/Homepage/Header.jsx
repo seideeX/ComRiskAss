@@ -38,13 +38,13 @@ const Header = ({ auth }) => {
             <div className="relative flex items-center gap-3">
                 <a href={route("welcome")}>
                     <img
-                        src="/images/city-of-ilagan.png"
+                        src="/images/cdrrmo.png"
                         alt="iBMIS"
                         className="w-12 hover:scale-110 transition-all"
                     />
                 </a>
                 <h1 className="text-[#004aad] font-montserrat text-xl font-black">
-                    iBIMS
+                    Community Risk Assessment System
                 </h1>
             </div>
 
@@ -53,7 +53,7 @@ const Header = ({ auth }) => {
                 {auth.user ? (
                     <Link
                         href={route(dashboardRoute)}
-                        className="py-2 px-4 border border-blue-500 text-blue-500 font-md rounded-full hover:bg-blue-500 hover:text-white transition-all flex items-center cursor-pointer"
+                        className="py-2 px-4 border border-violet-500 text-violet-500 font-md rounded-full hover:bg-violet-500 hover:text-white transition-all flex items-center cursor-pointer"
                     >
                         Dashboard <ChevronRight className="ml-2 text-lg" />
                     </Link>
@@ -61,18 +61,18 @@ const Header = ({ auth }) => {
                     <div className="flex gap-3">
                         <Link
                             href={route("login")}
-                            className="py-2 px-4 border border-blue-500 text-blue-500 font-md rounded-full hover:bg-blue-500 hover:text-white transition-all flex items-center cursor-pointer"
+                            className="py-2 px-4 border border-violet-500 text-violet-500 font-md rounded-full hover:bg-violet-500 hover:text-white transition-all flex items-center cursor-pointer"
                         >
                             Log In <ChevronRight className="ml-1 text-lg" />
                         </Link>
                         {/* <Link
                             href={route("register")}
-                            className="py-2 px-4 text-blue-500 font-md rounded-full hover:bg-blue-500 hover:text-white transition-all flex items-center cursor-pointer"
+                            className="py-2 px-4 text-violet-500 font-md rounded-full hover:bg-violet-500 hover:text-white transition-all flex items-center cursor-pointer"
                         >
                             Register
                         </Link> */}
                         {/* <Link
-                            className="py-2 px-4 text-blue-500 font-md rounded-full hover:bg-blue-500 hover:text-white transition-all flex items-center cursor-pointer"
+                            className="py-2 px-4 text-violet-500 font-md rounded-full hover:bg-violet-500 hover:text-white transition-all flex items-center cursor-pointer"
                             href={route("request.certificate")}
                         >
                             Issue a Cetificate
@@ -91,12 +91,12 @@ const Header = ({ auth }) => {
 
             {/* Mobile Menu */}
             {isMenuOpen && (
-                <ul className="absolute top-16 right-8 bg-white shadow-lg p-4 rounded-lg flex flex-col gap-4 text-blue-500">
+                <ul className="absolute top-16 right-8 bg-white shadow-lg p-4 rounded-lg flex flex-col gap-4 text-violet-500">
                     {auth.user ? (
                         <li>
                             <Link
                                 href={route(dashboardRoute)}
-                                className="hover:text-blue-700"
+                                className="hover:text-violet-700"
                             >
                                 Dashboard
                             </Link>
@@ -106,7 +106,7 @@ const Header = ({ auth }) => {
                             <li>
                                 <Link
                                     href={route("login")}
-                                    className="hover:text-blue-700"
+                                    className="hover:text-violet-700"
                                 >
                                     Log In
                                 </Link>
@@ -119,7 +119,7 @@ const Header = ({ auth }) => {
                                     Register
                                 </Link> */}
                                 {/* <Link
-                                    className="hover:text-blue-700"
+                                    className="hover:text-violet-700"
                                     href={route("request.certificate")}
                                 >
                                     Issue a Cetificate
