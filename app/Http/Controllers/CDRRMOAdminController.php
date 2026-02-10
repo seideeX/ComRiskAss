@@ -22,13 +22,29 @@ class CDRRMOAdminController extends Controller
 
     public function index(Request $request)
     {
+        // Get the logged-in user
+        $user = $request->user();
+        $isAdmin = $user->hasRole('admin');
+
         // Get the year from request or session
-        $year = $request->input('year') ?? session('cra_year');
+        $selectedYear = $request->input('year') ?? session('cra_year');
 
-        // Fetch the CRA record for the year
-        $cra = CommunityRiskAssessment::where('year', $year)->first();
+        // Start with CRA = null
+        $cra = null;
 
-        // If CRA does not exist OR has no population data, return empty dashboard
+        // Case 1: Admin always sees latest CRA
+        if ($isAdmin && !$selectedYear) {
+            $cra = CommunityRiskAssessment::latest('year')->first();
+            $year = $cra?->year;
+        } else {
+            // Case 2: User selected a year or non-admin
+            $year = $selectedYear;
+
+            // Try to fetch CRA for selected year
+            $cra = CommunityRiskAssessment::where('year', $year)->first();
+        }
+
+        // Check if CRA exists and has population data
         $hasData = $cra && CRAGeneralPopulation::where('cra_id', $cra->id)->exists();
 
         if (!$cra || !$hasData) {

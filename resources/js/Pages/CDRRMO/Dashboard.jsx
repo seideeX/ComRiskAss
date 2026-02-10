@@ -46,6 +46,8 @@ export default function Dashboard({
     const breadcrumbs = [{ label: "Dashboard", showOnMobile: true }];
     const [sortOrder, setSortOrder] = useState("desc");
     const { props } = usePage();
+    const userRoles = props.auth?.user?.role || []; // adjust if your roles structure is different
+    const isAdmin = userRoles.includes("admin");
 
     const groupedServices = householdServices.reduce((acc, item) => {
         if (!acc[item.category]) acc[item.category] = {};
@@ -66,11 +68,11 @@ export default function Dashboard({
                 ([service_name, value]) => ({
                     service_name,
                     households_quantity: value,
-                })
+                }),
             );
             return acc;
         },
-        {}
+        {},
     );
 
     const data = [
@@ -172,7 +174,7 @@ export default function Dashboard({
         title: `${hazard} Disaster Risk Summary`,
         icon: <Flame className="w-6 h-6 text-orange-500" />,
         routeName: `cdrrmo_admin/cra/population-exposure-summary/pdf?hazard=${encodeURIComponent(
-            hazard
+            hazard,
         )}`,
         color: "bg-orange-100",
         description: `Summary report for ${hazard} hazard`,
@@ -189,7 +191,7 @@ export default function Dashboard({
         const hasQuery = routePath.includes("?");
         const exportUrl = `${window.location.origin}/${routePath.replace(
             /^\/+/,
-            ""
+            "",
         )}${hasQuery ? "&" : "?"}year=${year}`;
 
         console.log(exportUrl);
@@ -221,24 +223,26 @@ export default function Dashboard({
                                     </p>
                                 </div>
 
-                                {/* Barangay Dropdown */}
-                                <select
-                                    className="border border-gray-300 rounded-lg p-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    value={selectedBarangay || ""}
-                                    onChange={handleBarangayChange}
-                                >
-                                    <option value="">
-                                        Ilagan City (All Barangays)
-                                    </option>
-                                    {barangays.map((barangay) => (
-                                        <option
-                                            key={barangay.id}
-                                            value={barangay.id}
-                                        >
-                                            {barangay.name}
+                                {/* Barangay Dropdown: only show if NOT admin */}
+                                {!isAdmin && (
+                                    <select
+                                        className="border border-gray-300 rounded-lg p-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        value={selectedBarangay || ""}
+                                        onChange={handleBarangayChange}
+                                    >
+                                        <option value="">
+                                            Ilagan City (All Barangays)
                                         </option>
-                                    ))}
-                                </select>
+                                        {barangays.map((barangay) => (
+                                            <option
+                                                key={barangay.id}
+                                                value={barangay.id}
+                                            >
+                                                {barangay.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
                             </div>
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-2">
                                 {/* Left column: Cards + Charts */}
@@ -316,84 +320,41 @@ export default function Dashboard({
                                                     data={dataArray}
                                                 />
                                             </div>
-                                        )
+                                        ),
                                     )}
                                 </div>
                             </div>
-                            <div className="space-y-12 px-6 py-6">
-                                {/* General Reports */}
-                                <section>
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                                        General Reports
-                                    </h2>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                        {reportCards.map((item) => (
-                                            <div
-                                                key={item.title}
-                                                className="flex flex-col justify-between p-5 rounded-xl shadow-md hover:shadow-xl transition bg-white border border-gray-200 hover:scale-[1.02]"
-                                            >
-                                                <div className="flex items-center space-x-4 mb-3">
-                                                    <div
-                                                        className={`flex items-center justify-center w-12 h-12 rounded-full ${item.color} text-white`}
-                                                    >
-                                                        {item.icon}
-                                                    </div>
-                                                    <h3 className="text-base font-semibold text-gray-900">
-                                                        {item.title}
-                                                    </h3>
-                                                </div>
-                                                <p className="text-xs text-gray-500 mb-4">
-                                                    {item.description ||
-                                                        "Summary report available"}
-                                                </p>
-                                                <button
-                                                    onClick={() =>
-                                                        handleExport(
-                                                            item.routeName
-                                                        )
-                                                    }
-                                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition"
+                            {!isAdmin && (
+                                <div className="space-y-12 px-6 py-6">
+                                    {/* General Reports */}
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                                            General Reports
+                                        </h2>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                            {reportCards.map((item) => (
+                                                <div
+                                                    key={item.title}
+                                                    className="flex flex-col justify-between p-5 rounded-xl shadow-md hover:shadow-xl transition bg-white border border-gray-200 hover:scale-[1.02]"
                                                 >
-                                                    Export PDF
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
-
-                                {/* Hazard Reports */}
-                                <section>
-                                    <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                                        Hazard Reports
-                                    </h2>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                        {hazardCards.map((item) => (
-                                            <div
-                                                key={`${item.index}-${item.title}`}
-                                                className="flex flex-col justify-between p-5 rounded-xl shadow-md hover:shadow-xl transition bg-white border border-gray-200 hover:scale-[1.02]"
-                                            >
-                                                <div className="flex items-center space-x-4 mb-3">
-                                                    <div
-                                                        className={`flex items-center justify-center w-12 h-12 rounded-full ${item.color} text-white`}
-                                                    >
-                                                        {item.icon}
+                                                    <div className="flex items-center space-x-4 mb-3">
+                                                        <div
+                                                            className={`flex items-center justify-center w-12 h-12 rounded-full ${item.color} text-white`}
+                                                        >
+                                                            {item.icon}
+                                                        </div>
+                                                        <h3 className="text-base font-semibold text-gray-900">
+                                                            {item.title}
+                                                        </h3>
                                                     </div>
-                                                    <h3 className="text-base font-semibold text-gray-900">
-                                                        {item.title}
-                                                    </h3>
-                                                </div>
-                                                <p className="text-xs text-gray-500 mb-4">
-                                                    {item.description ||
-                                                        "Summary report available"}
-                                                </p>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
-                                                        Hazard
-                                                    </span>
+                                                    <p className="text-xs text-gray-500 mb-4">
+                                                        {item.description ||
+                                                            "Summary report available"}
+                                                    </p>
                                                     <button
                                                         onClick={() =>
                                                             handleExport(
-                                                                item.routeName
+                                                                item.routeName,
                                                             )
                                                         }
                                                         className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition"
@@ -401,11 +362,56 @@ export default function Dashboard({
                                                         Export PDF
                                                     </button>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
-                            </div>
+                                            ))}
+                                        </div>
+                                    </section>
+
+                                    {/* Hazard Reports */}
+                                    <section>
+                                        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                                            Hazard Reports
+                                        </h2>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                            {hazardCards.map((item) => (
+                                                <div
+                                                    key={`${item.index}-${item.title}`}
+                                                    className="flex flex-col justify-between p-5 rounded-xl shadow-md hover:shadow-xl transition bg-white border border-gray-200 hover:scale-[1.02]"
+                                                >
+                                                    <div className="flex items-center space-x-4 mb-3">
+                                                        <div
+                                                            className={`flex items-center justify-center w-12 h-12 rounded-full ${item.color} text-white`}
+                                                        >
+                                                            {item.icon}
+                                                        </div>
+                                                        <h3 className="text-base font-semibold text-gray-900">
+                                                            {item.title}
+                                                        </h3>
+                                                    </div>
+                                                    <p className="text-xs text-gray-500 mb-4">
+                                                        {item.description ||
+                                                            "Summary report available"}
+                                                    </p>
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                                                            Hazard
+                                                        </span>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleExport(
+                                                                    item.routeName,
+                                                                )
+                                                            }
+                                                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition"
+                                                        >
+                                                            Export PDF
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </section>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

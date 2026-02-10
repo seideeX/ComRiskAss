@@ -6,13 +6,13 @@ export default function GuestLayout({ children }) {
     return (
         <div
             className="flex min-h-screen flex-col items-center justify-center
-                        bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300
+                        bg-gradient-to-br from-violet-100 via-violet-200 to-violet-300
                         relative overflow-hidden"
         >
             <Toaster richColors />
             {/* Animated background circles */}
-            <div className="absolute -top-10 -left-10 w-60 h-60 bg-blue-400 opacity-30 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-600 opacity-20 rounded-full blur-3xl animate-bounce"></div>
+            <div className="absolute -top-10 -left-10 w-60 h-60 bg-violet-400 opacity-30 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-violet-600 opacity-20 rounded-full blur-3xl animate-bounce"></div>
 
             {/* Logo with float animation */}
             <div className="animate-float">

@@ -95,39 +95,39 @@ export function AppSidebar({ auth }) {
     const [pendingCount, setPendingCount] = useState(0);
     const pendingCountCacheKey = "pending-certificate-count";
 
-    const fetchPendingCertificateCount = async () => {
-        try {
-            const res = await axios.get(`${APP_URL}/certificates/pending`);
-            const apiCount = res.data.count;
+    // const fetchPendingCertificateCount = async () => {
+    //     try {
+    //         const res = await axios.get(`${APP_URL}/certificates/pending`);
+    //         const apiCount = res.data.count;
 
-            // Read cache
-            const cached =
-                JSON.parse(localStorage.getItem(pendingCountCacheKey)) || {};
-            const cachedCount = cached.count || 0;
+    //         // Read cache
+    //         const cached =
+    //             JSON.parse(localStorage.getItem(pendingCountCacheKey)) || {};
+    //         const cachedCount = cached.count || 0;
 
-            if (cachedCount !== apiCount) {
-                setPendingCount(apiCount);
-                localStorage.setItem(
-                    pendingCountCacheKey,
-                    JSON.stringify({ count: apiCount, _cachedAt: Date.now() }),
-                );
-            } else {
-                setPendingCount(cachedCount); // fallback to cached
-            }
-        } catch (err) {
-            console.error("Failed to fetch pending certificate count:", err);
-        }
-    };
+    //         if (cachedCount !== apiCount) {
+    //             setPendingCount(apiCount);
+    //             localStorage.setItem(
+    //                 pendingCountCacheKey,
+    //                 JSON.stringify({ count: apiCount, _cachedAt: Date.now() }),
+    //             );
+    //         } else {
+    //             setPendingCount(cachedCount); // fallback to cached
+    //         }
+    //     } catch (err) {
+    //         console.error("Failed to fetch pending certificate count:", err);
+    //     }
+    // };
 
-    useEffect(() => {
-        if (
-            !["barangay_officer", "admin"].some((role) =>
-                userRoles.includes(role),
-            )
-        )
-            return;
-        fetchPendingCertificateCount();
-    }, []);
+    // useEffect(() => {
+    //     if (
+    //         !["barangay_officer", "admin"].some((role) =>
+    //             userRoles.includes(role),
+    //         )
+    //     )
+    //         return;
+    //     fetchPendingCertificateCount();
+    // }, []);
 
     const fetchCRAList = async () => {
         try {
@@ -269,7 +269,7 @@ export function AppSidebar({ auth }) {
         },
         {
             title: "Admin Dashboard",
-            url: "/admin/dashboard",
+            url: `/cdrrmo_admin/dashboard${user.barangay_id ? `?barangay_id=${user.barangay_id}` : ""}`,
             icon: LayoutDashboard,
             roles: ["admin"],
         },
@@ -967,16 +967,34 @@ export function AppSidebar({ auth }) {
         }
     };
 
+    // const handleYearChange = (e) => {
+    //     const year = e.target.value;
+    //     setSelectedYear(year);
+    //     sessionStorage.setItem("cra_year", year);
+
+    //     router.get(
+    //         window.location.pathname,
+    //         { year },
+    //         { preserveState: true, replace: true },
+    //     );
+    // };
     const handleYearChange = (e) => {
         const year = e.target.value;
         setSelectedYear(year);
         sessionStorage.setItem("cra_year", year);
 
-        router.get(
-            window.location.pathname,
-            { year },
-            { preserveState: true, replace: true },
-        );
+        // Prepare the query parameters
+        const query = { year };
+
+        // If admin, add their barangay_id
+        if (user?.role === "admin" && user?.barangay_id) {
+            query.barangay_id = user.barangay_id;
+        }
+
+        router.get(window.location.pathname, query, {
+            preserveState: true,
+            replace: true,
+        });
     };
 
     const handleDeleteClick = (id) => {

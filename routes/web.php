@@ -75,6 +75,8 @@ Route::get('/getCRAList', [CRADataController::class, 'getCRAList'])->name('getcr
 Route::get('/craProgress', [CRAController::class, 'craProgress'])->name('craProgress');
 Route::patch('/user/{user}/toggle-account', [UserController::class, 'toggleAccount'])->name('user.toggle');
 Route::patch('/barangayofficial/{official}/toggle-status', [BarangayOfficialController::class, 'toggleStatus'])->name('official.toggle');
+    Route::get('cdrrmo_admin/dashboard', [CDRRMOAdminController::class, 'index'])
+        ->name('cdrrmo_admin.dashboard');
 
 Route::get('/test-mail-env', function () {
     return [
@@ -91,6 +93,8 @@ Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin
     Route::get('cra/dashboard', [CRAController::class, 'dashboard'])->name('cra.dashboard');
     Route::get('cra/datacollection', [CRAController::class, 'brgyDataCollection'])->name('cra.datacollection');
     Route::post('cra/store', [CRAController::class, 'store'])->name('cra.store');
+
+    Route::get('barangay_management/barangaydetails', [BarangayManagementController::class, 'barangayDetails'])->name('barangay_profile.details');
 
     // CRA PDF route
     Route::get('/cra/pdf/{id}', [PDFController::class, 'download'])
@@ -131,8 +135,6 @@ Route::middleware(['auth', 'role:admin|super_admin'])->group(function () {
 
 // CDRRMO Admin-only routes
 Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(function () {
-    Route::get('/dashboard', [CDRRMOAdminController::class, 'index'])
-        ->name('cdrrmo_admin.dashboard');
     Route::get('alldatacollection', [CDRRMOAdminController::class, 'allDataCollectionSummary'])
         ->name('cdrrmo_admin.datacollection');
 

@@ -64,7 +64,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         if ($user->isAdmin()) {
-            return redirect()->intended(route('admin.dashboard', [], false));
+            return redirect()->intended(route('cdrrmo_admin.dashboard', ['barangay_id' => $user->barangay_id], false));
         }
 
         if ($user->isCdrrmo()) {
