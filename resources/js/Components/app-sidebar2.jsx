@@ -535,6 +535,12 @@ export function AppSidebar({ auth }) {
             })(),
         },
         {
+            title: "Barangay Accounts",
+            icon: FileStack,
+            roles: ["cdrrmo_admin"],
+            url: "/cdrrmo_admin/user",
+        },
+        {
             title: "CRA Settings",
             icon: Settings,
             roles: ["cdrrmo_admin", "admin"],

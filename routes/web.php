@@ -84,7 +84,7 @@ Route::get('/test-mail-env', function () {
         'password' => env('MAIL_PASSWORD'),
     ];
 });
-Route::post('user/confirmpassword', [UserController::class, 'confirmPassword'])->name('user.confirm');
+// Route::post('user/confirmpassword', [UserController::class, 'confirmPassword'])->name('user.confirm');
 
 // Admin-only routes
 Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin'])->group(function () {
@@ -121,18 +121,18 @@ Route::middleware(['auth', 'role:barangay_officer'])->group(function () {
         ->name('barangay_officer.dashboard');
 });
 
-Route::middleware(['auth', 'role:admin|super_admin'])->group(function () {
-    Route::get('/admin', function () {
-        return redirect()->route('admin.dashboard');
-    });
-    Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])
-        ->name('admin.dashboard');
+// Route::middleware(['auth', 'role:admin|super_admin'])->group(function () {
+//     Route::get('/admin', function () {
+//         return redirect()->route('admin.dashboard');
+//     });
+//     Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])
+//         ->name('admin.dashboard');
 
-    Route::get('/barangay_profile', [BarangayProfileController::class, 'index'])->name('barangay_profile.index');
-    Route::put('/barangay_profile/update/{barangay}', [BarangayProfileController::class, 'update'])->name('barangay_profile.update');
+//     Route::get('/barangay_profile', [BarangayProfileController::class, 'index'])->name('barangay_profile.index');
+//     Route::put('/barangay_profile/update/{barangay}', [BarangayProfileController::class, 'update'])->name('barangay_profile.update');
 
-    Route::resource('user', UserController::class);
-});
+//     Route::resource('user', UserController::class);
+// });
 
 // CDRRMO Admin-only routes
 Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(function () {
@@ -192,6 +192,12 @@ Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(
     ->name('riskassessment.summary.pdf');
     Route::get('/cra/vulnerability-assessment-summary/pdf', [ReportGenerationController::class, 'exportOverallVulnerabilityMatrixSummary'])
     ->name('vulnerabilityassessment.summary.pdf');
+
+    Route::post('user/confirmpassword', [UserController::class, 'confirmPassword'])->name('user.confirm');
+    Route::get('/user/{id}', [UserController::class, 'accountDetails'])->name('user.details');
+    Route::patch('/user/{user}/reset-password', [UserController::class, 'resetPassword'])
+    ->name('user.reset-password');
+    Route::resource('user', UserController::class);
 });
 
 // Super Admin-only routes
