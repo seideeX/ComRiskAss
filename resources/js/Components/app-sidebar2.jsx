@@ -899,20 +899,27 @@ export function AppSidebar({ auth }) {
                                                             </select>
 
                                                             {/* Add Button */}
-                                                            <button
-                                                                type="button"
-                                                                onClick={
-                                                                    handleAddCRA
-                                                                }
-                                                                className="mt-3 flex items-center gap-2 w-full justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
-                                                            >
-                                                                <Plus
-                                                                    size={16}
-                                                                />
-                                                                <span>
-                                                                    Add CRA
-                                                                </span>
-                                                            </button>
+                                                            {userRoles.includes(
+                                                                "cdrrmo_admin",
+                                                                "admin",
+                                                            ) && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={
+                                                                        handleAddCRA
+                                                                    }
+                                                                    className="mt-3 flex items-center gap-2 w-full justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-md transition-colors"
+                                                                >
+                                                                    <Plus
+                                                                        size={
+                                                                            16
+                                                                        }
+                                                                    />
+                                                                    <span>
+                                                                        Add CRA
+                                                                    </span>
+                                                                </button>
+                                                            )}
 
                                                             {/* List of CRA Years */}
                                                             {userRoles.includes(
@@ -1121,7 +1128,6 @@ export function AppSidebar({ auth }) {
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={confirmDelete}
                 residentId={recordToDelete}
-                // optional enhancements 👇
                 itemName={`CRA Record #${recordToDelete}`}
                 itemLabel="CRA Record"
                 note="Deleting this record will permanently remove all related data."
