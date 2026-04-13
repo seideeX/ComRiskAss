@@ -162,6 +162,8 @@ class BarangayCRAController extends Controller
             'affected_areas' => $data['affected_areas'] ?? [],
             'prepositioned_inventories' => $data['prepositioned_inventories'] ?? [],
         ];
+
+        dd($data);
     }
 
     /**
