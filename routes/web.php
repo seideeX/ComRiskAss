@@ -5,6 +5,7 @@ use App\Http\Controllers\ActivityLogsController;
 use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BarangayController;
+use App\Http\Controllers\BarangayCRAController;
 use App\Http\Controllers\BarangayInfrastructureController;
 use App\Http\Controllers\BarangayFacilityController;
 use App\Http\Controllers\BarangayInstitutionController;
@@ -197,10 +198,12 @@ Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(
     Route::get('/user/{id}', [UserController::class, 'accountDetails'])->name('user.details');
     Route::patch('/user/{user}/reset-password', [UserController::class, 'resetPassword'])
     ->name('user.reset-password');
-    Route::get('/accounts', [SuperAdminController::class, 'accounts'])->name('super_admin.accounts');
-    Route::put('/update/account/{id}', [SuperAdminController::class, 'updateAccount'])->name('super_admin.account.update');
-    Route::post('/store/account', [SuperAdminController::class, 'addAccount'])->name('super_admin.account.store');
-    Route::get('/details/{id}', [SuperAdminController::class, 'accountDetails'])->name('super_admin.account.details');
+    Route::get('/accounts', [SuperAdminController::class, 'accounts'])->name('cdrrmo_admin.accounts');
+    Route::put('/update/account/{id}', [SuperAdminController::class, 'updateAccount'])->name('cdrrmo_admin.account.update');
+    Route::post('/store/account', [SuperAdminController::class, 'addAccount'])->name('cdrrmo_admin.account.store');
+    Route::get('/details/{id}', [SuperAdminController::class, 'accountDetails'])->name('cdrrmo_admin.account.details');
+
+    Route::resource('barangay-cra', BarangayCRAController::class);
 });
 
 // Super Admin-only routes

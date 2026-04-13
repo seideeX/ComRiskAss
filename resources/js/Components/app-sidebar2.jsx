@@ -274,10 +274,10 @@ export function AppSidebar({ auth }) {
             url: "/cdrrmo_admin/accounts",
         },
         {
-            title: "Barangay Accounts",
+            title: "Barangay CRA's",
             icon: FileStack,
             roles: ["cdrrmo_admin"],
-            url: "/cdrrmo_admin/accounts",
+            url: "/cdrrmo_admin/barangay-cra",
         },
         {
             title: "Demographic Summary",

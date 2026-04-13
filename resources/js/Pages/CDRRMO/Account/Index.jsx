@@ -59,7 +59,7 @@ export default function Index({ accounts, queryParams, barangays }) {
         if (queryParams.page) {
             delete queryParams.page;
         }
-        router.get(route("super_admin.accounts", queryParams));
+        router.get(route("cdrrmo_admin.accounts", queryParams));
     };
     const onKeyPressed = (field, e) => {
         if (e.key === "Enter") {
