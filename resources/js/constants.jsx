@@ -619,3 +619,53 @@ export const ACTION_TYPE_COLORS = {
     // Default fallback
     default: "bg-gray-100 text-gray-800",
 };
+
+export const CRA_PROGRESS_STATUS = [
+    {
+        min: 0,
+        max: 0,
+        label: "Not Started",
+        short: "No Data",
+        description: "No CRA data has been entered yet",
+        color: "text-slate-600",
+        bg: "bg-slate-100",
+        bar: "bg-slate-400",
+    },
+    {
+        min: 1,
+        max: 49,
+        label: "In Progress",
+        short: "Ongoing",
+        description: "CRA encoding is ongoing",
+        color: "text-blue-700",
+        bg: "bg-blue-100",
+        bar: "bg-blue-500",
+    },
+    {
+        min: 50,
+        max: 99,
+        label: "Nearly Complete",
+        short: "Almost Done",
+        description: "Most sections are already completed",
+        color: "text-amber-700",
+        bg: "bg-amber-100",
+        bar: "bg-amber-500",
+    },
+    {
+        min: 100,
+        max: 100,
+        label: "Completed",
+        short: "Complete",
+        description: "CRA is fully completed and ready",
+        color: "text-green-700",
+        bg: "bg-green-100",
+        bar: "bg-green-500",
+    },
+];
+export const getProgressStatus = (percentage = 0) => {
+    return (
+        CRA_PROGRESS_STATUS.find(
+            (item) => percentage >= item.min && percentage <= item.max,
+        ) || CRA_PROGRESS_STATUS[0] // ✅ fallback
+    );
+};

@@ -101,6 +101,8 @@ Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin
     // CRA PDF route
     Route::get('/cra/pdf/{id}', [PDFController::class, 'download'])
         ->name('cra.pdf');
+    Route::get('/cra/download/progress/{progressId}', [PDFController::class, 'downloadByProgress'])
+    ->name('cra.download.progress');
 
     Route::post('/check-email-unique', function (Request $request) {
         $request->validate([
@@ -112,6 +114,9 @@ Route::middleware(['auth', 'role:barangay_officer|cdrrmo_admin|super_admin|admin
         return response()->json(['unique' => !$exists]);
     });
 
+    Route::get('/cdrrmo_admin/barangay_profile', [BarangayProfileController::class, 'index'])->name('barangay_profile.index');
+    Route::put('/cdrrmo_admin/barangay_profile/update/{barangay}', [BarangayProfileController::class, 'update'])->name('barangay_profile.update');
+
 });
 
 Route::middleware(['auth', 'role:barangay_officer'])->group(function () {
@@ -122,18 +127,6 @@ Route::middleware(['auth', 'role:barangay_officer'])->group(function () {
         ->name('barangay_officer.dashboard');
 });
 
-// Route::middleware(['auth', 'role:admin|super_admin'])->group(function () {
-//     Route::get('/admin', function () {
-//         return redirect()->route('admin.dashboard');
-//     });
-//     Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])
-//         ->name('admin.dashboard');
-
-//     Route::get('/barangay_profile', [BarangayProfileController::class, 'index'])->name('barangay_profile.index');
-//     Route::put('/barangay_profile/update/{barangay}', [BarangayProfileController::class, 'update'])->name('barangay_profile.update');
-
-//     Route::resource('user', UserController::class);
-// });
 
 // CDRRMO Admin-only routes
 Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(function () {
@@ -204,30 +197,11 @@ Route::middleware(['auth', 'role:cdrrmo_admin'])->prefix('cdrrmo_admin')->group(
     Route::get('/details/{id}', [SuperAdminController::class, 'accountDetails'])->name('cdrrmo_admin.account.details');
 
     Route::resource('barangay-cra', BarangayCRAController::class);
+
+    Route::resource('activity_log', ActivityLogsController::class);
+    Route::get('report/export-activity-logs-excel', [ReportGenerationController::class, 'exportActivityLogs'])
+    ->name('report.activitylogs');
 });
-
-// Super Admin-only routes
-// Route::middleware(['auth', 'role:super_admin|cdrrmo_admin'])->prefix('super_admin')->group(function () {
-//     Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('super_admin.dashboard');
-//     Route::get('/accounts', [SuperAdminController::class, 'accounts'])->name('super_admin.accounts');
-//     Route::put('/update/account/{id}', [SuperAdminController::class, 'updateAccount'])->name('super_admin.account.update');
-//     Route::post('/store/account', [SuperAdminController::class, 'addAccount'])->name('super_admin.account.store');
-//     Route::get('/details/{id}', [SuperAdminController::class, 'accountDetails'])->name('super_admin.account.details');
-//     Route::get('/barangay_details/{id}', [BarangayController::class, 'barangayDetails'])->name('barangay.details');
-//     Route::resource('barangay', BarangayController::class);
-
-//     // reports
-//     Route::get('/statistics/population-summary', [SuperAdminDataController::class, 'populationSummary'])->name('super_admin.statistics.population_summary');
-//     Route::get('/statistics/employment-summary', [SuperAdminDataController::class, 'employmentSummary'])->name('super_admin.statistics.employment_summary');
-
-
-//     // exports
-//     Route::get('/statistics/population-summary-export', [SuperAdminDataController::class, 'exportPopulationSummaryByAgeGroup'])->name('super_admin.export.population_summary');
-//     Route::get('/statistics/purok-population-summary-export', [SuperAdminDataController::class, 'exportPopulationSummaryByPurok'])->name('super_admin.export.purok_population_summary');
-//     Route::get('/statistics/sex-population-summary-export', [SuperAdminDataController::class, 'exportPopulationSummaryBySex'])->name('super_admin.export.sex_population_summary');
-//     Route::get('/statistics/employment-summary-export', [SuperAdminDataController::class, 'exportEmploymentSummary'])->name('super_admin.export.employment_summary');
-
-// });
 
 Route::middleware(['auth', 'role:resident|barangay_officer'])->group(function () {
     Route::get('/account/user/basic-information', [ResidentAccountController::class, 'basicInformation'])

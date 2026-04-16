@@ -47,7 +47,7 @@ export default function Dashboard({
     const [sortOrder, setSortOrder] = useState("desc");
     const { props } = usePage();
     const userRoles = props.auth?.user?.role || []; // adjust if your roles structure is different
-    const isAdmin = userRoles.includes("admin");
+    const isAdmin = userRoles.includes("cdrrmo_admin");
 
     const groupedServices = householdServices.reduce((acc, item) => {
         if (!acc[item.category]) acc[item.category] = {};
@@ -224,7 +224,7 @@ export default function Dashboard({
                                 </div>
 
                                 {/* Barangay Dropdown: only show if NOT admin */}
-                                {!isAdmin && (
+                                {isAdmin && (
                                     <select
                                         className="border border-gray-300 rounded-lg p-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         value={selectedBarangay || ""}
@@ -324,7 +324,7 @@ export default function Dashboard({
                                     )}
                                 </div>
                             </div>
-                            {!isAdmin && (
+                            {isAdmin && (
                                 <div className="space-y-12 px-6 py-6">
                                     {/* General Reports */}
                                     <section>

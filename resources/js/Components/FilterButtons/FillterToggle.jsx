@@ -11,6 +11,7 @@ import {
     BLOOD_TYPE_OPTIONS,
     BMI_STATUS,
     CERTIFICATE_REQUEST_STATUS_TEXT,
+    CRA_PROGRESS_STATUS,
     INCOME_BRACKETS,
 } from "@/constants";
 import { useState, useRef, useEffect } from "react";
@@ -2307,6 +2308,24 @@ const FilterToggle = ({
                         )}
                     />
                 </div>
+            )}
+            {isVisible("status_percentage") && (
+                <Select
+                    onValueChange={(v) => searchFieldName("status", v)}
+                    value={queryParams.status ?? "All"}
+                >
+                    <SelectTrigger className="w-[220px]">
+                        <SelectValue placeholder="CRA Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="All">All Status</SelectItem>
+                        {CRA_PROGRESS_STATUS.map((status) => (
+                            <SelectItem key={status.label} value={status.label}>
+                                {status.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             )}
             {/* Clear Filters Button */}
             {clearRouteAxios ? (

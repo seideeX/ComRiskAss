@@ -9,6 +9,8 @@ import { Toaster, toast } from "sonner";
 import DynamicTable from "@/Components/DynamicTable";
 import DynamicTableControls from "@/Components/FilterButtons/DynamicTableControls";
 import useAppUrl from "@/hooks/useAppUrl";
+import { getProgressStatus } from "@/constants";
+import FilterToggle from "@/Components/FilterButtons/FillterToggle";
 
 export default function Index({ barangays, queryParams }) {
     const breadcrumbs = [{ label: "Barangay CRA", showOnMobile: true }];
@@ -28,7 +30,23 @@ export default function Index({ barangays, queryParams }) {
         "actions",
     ]);
 
-    const [showFilters, setShowFilters] = useState(false);
+    const hasActiveFilter = Object.entries(queryParams || {}).some(
+        ([key, value]) =>
+            ["status_percentage", "year", "search"].includes(key) &&
+            value &&
+            value !== "" &&
+            value !== "All",
+    );
+
+    const [showFilters, setShowFilters] = useState(hasActiveFilter);
+
+    useEffect(() => {
+        if (hasActiveFilter) {
+            setShowFilters(true);
+        }
+    }, [hasActiveFilter]);
+
+    const toggleShowFilters = () => setShowFilters((prev) => !prev);
 
     // ✅ SEARCH
     const handleSearchSubmit = (e) => {
@@ -40,7 +58,7 @@ export default function Index({ barangays, queryParams }) {
         if (value) queryParams[field] = value;
         else delete queryParams[field];
 
-        router.get(route("cdrrmo.barangay.cra.index", queryParams));
+        router.get(route("barangay-cra.index", queryParams));
     };
     const ViewButton = ({ progressId }) => {
         if (!progressId) {
@@ -56,12 +74,12 @@ export default function Index({ barangays, queryParams }) {
             <Button
                 size="sm"
                 onClick={() =>
-                    router.visit(route("barangay-cra.show", progressId))
+                    router.visit(route("barangay-cra.edit", progressId))
                 }
                 className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-blue-500 hover:bg-blue-600 text-white border border-blue-500 transition"
             >
                 <Eye className="w-4 h-4" />
-                View
+                Edit
             </Button>
         );
     };
@@ -75,6 +93,18 @@ export default function Index({ barangays, queryParams }) {
         if (error) toast.error(error);
     }, [error]);
 
+    const formatDate = (value) => {
+        if (!value) return "No update yet";
+
+        return new Date(value).toLocaleString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+        });
+    };
+
     // ✅ TABLE COLUMNS
     const allColumns = [
         { key: "barangay_name", label: "Barangay" },
@@ -86,56 +116,87 @@ export default function Index({ barangays, queryParams }) {
 
     // ✅ RENDERERS
     const columnRenderers = {
-        barangay_name: (row) => (
-            <div className="flex flex-col">
-                <span className="font-semibold text-gray-800 text-sm">
-                    {row.barangay_name}
-                </span>
-                <span className="text-xs text-gray-400">ID: {row.id}</span>
-            </div>
-        ),
+        barangay_name: (row) => {
+            return (
+                <div className="min-w-[180px]">
+                    <div className="truncate text-sm font-semibold text-slate-800">
+                        {row.barangay_name}
+                    </div>
+
+                    <div className="text-[11px] text-slate-400">
+                        ID: {row.id}
+                    </div>
+                </div>
+            );
+        },
 
         progress: (row) => {
             const percentage = parseFloat(row.latest_progress?.percentage || 0);
+            const status = getProgressStatus(percentage);
+
+            const submitted = row.latest_progress?.submitted_at;
 
             return (
-                <div className="flex flex-col gap-1 w-full max-w-[160px]">
+                <div className="w-full min-w-[240px] max-w-[280px]">
+                    <div className="mb-2 flex items-center justify-between">
+                        <span className="text-xs font-medium text-slate-600">
+                            Completion
+                        </span>
+                        <span className="text-xs font-semibold text-slate-800">
+                            {percentage}%
+                        </span>
+                    </div>
+
                     {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
                         <div
-                            className={`h-2.5 rounded-full transition-all duration-500 ${
-                                percentage === 100
-                                    ? "bg-green-500"
-                                    : percentage > 0
-                                      ? "bg-yellow-500"
-                                      : "bg-gray-400"
-                            }`}
+                            className={`h-2.5 rounded-full transition-all duration-500 ${status.bar}`}
                             style={{ width: `${percentage}%` }}
                         />
                     </div>
 
-                    {/* Percentage */}
-                    <div className="flex justify-between text-xs text-gray-600">
-                        <span>{percentage}%</span>
-                        <span className="text-gray-400">
-                            {percentage === 100
-                                ? "Complete"
-                                : percentage > 0
-                                  ? "In Progress"
-                                  : "No Data"}
+                    {/* Status + Description */}
+                    <div className="mt-2 flex items-start justify-between gap-3">
+                        <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.bg} ${status.color}`}
+                        >
+                            {status.short}
                         </span>
+
+                        <span className="text-right text-[11px] leading-4 text-slate-500">
+                            {status.description}
+                        </span>
+                    </div>
+
+                    {/* NEW: Submitted Info */}
+                    <div className="mt-2 text-[11px] text-slate-400">
+                        {submitted
+                            ? `Submitted: ${formatDate(submitted)}`
+                            : "Not submitted yet"}
                     </div>
                 </div>
             );
         },
 
         year: (row) => {
-            const year = row.latest_progress?.community_risk_assessment?.year;
+            const year =
+                row.latest_progress?.community_risk_assessment?.year ||
+                row.progress_list?.[0]?.year;
+
+            const updatedAt = row.latest_progress?.updated_at;
 
             return (
-                <div className="flex items-center">
-                    <span className="px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-md">
+                <div className="flex min-w-[140px] flex-col">
+                    <span className="inline-flex w-fit items-center rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
                         {year || "N/A"}
+                    </span>
+
+                    <span className="mt-1 text-[11px] text-slate-400">
+                        CRA Year
+                    </span>
+
+                    <span className="mt-2 text-[11px] leading-4 text-slate-500">
+                        Updated: {formatDate(updatedAt)}
                     </span>
                 </div>
             );
@@ -143,33 +204,48 @@ export default function Index({ barangays, queryParams }) {
 
         status: (row) => {
             const percentage = parseFloat(row.latest_progress?.percentage || 0);
+            const status = getProgressStatus(percentage);
 
-            let status = "Not Started";
-            let style = "bg-gray-100 text-gray-600 border border-gray-200";
-
-            if (percentage === 100) {
-                status = "Completed";
-                style = "bg-green-50 text-green-700 border border-green-200";
-            } else if (percentage > 0) {
-                status = "Ongoing";
-                style = "bg-yellow-50 text-yellow-700 border border-yellow-200";
-            }
+            const submitted = row.latest_progress?.submitted_at;
 
             return (
-                <span
-                    className={`inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full ${style}`}
-                >
-                    {status}
-                </span>
+                <div className="flex min-w-[160px] flex-col gap-1">
+                    <span
+                        className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${status.bg} ${status.color}`}
+                    >
+                        {status.label}
+                    </span>
+
+                    <span className="text-[11px] text-slate-500">
+                        {status.description}
+                    </span>
+
+                    {/* NEW */}
+                    <span className="text-[11px] text-slate-400">
+                        {submitted ? "Submitted" : "Draft"}
+                    </span>
+                </div>
             );
         },
 
         actions: (row) => {
             const progressId = row.latest_progress?.id;
+            const percentage = parseFloat(row.latest_progress?.percentage || 0);
+            const hasRecord = !!progressId;
 
             return (
-                <div className="flex items-center">
+                <div className="flex min-w-[160px] flex-col gap-2">
                     <ViewButton progressId={progressId} />
+
+                    <span
+                        className={`inline-flex w-fit rounded-md px-2 py-1 text-[11px] font-medium ${
+                            hasRecord
+                                ? "bg-slate-100 text-slate-700"
+                                : "bg-rose-50 text-rose-600"
+                        }`}
+                    >
+                        {hasRecord ? `${percentage}% saved` : "No CRA record"}
+                    </span>
                 </div>
             );
         },
@@ -302,6 +378,16 @@ export default function Index({ barangays, queryParams }) {
                         </div>
 
                         {/* TABLE */}
+                        {showFilters && (
+                            <FilterToggle
+                                queryParams={queryParams}
+                                visibleFilters={["status_percentage"]}
+                                showFilters={true}
+                                searchFieldName={searchField}
+                                clearRouteName="barangay-cra.index"
+                                clearRouteParams={{}}
+                            />
+                        )}
                         <DynamicTable
                             passedData={barangays}
                             allColumns={allColumns}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLogHelper;
 use App\Http\Requests\CRAStoreRequest;
 use App\Models\Barangay;
 use App\Models\CommunityRiskAssessment;
@@ -49,6 +50,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Services\CraLogger;
 
 class CRAController extends Controller
 {
@@ -841,8 +843,9 @@ class CRAController extends Controller
     {
         DB::beginTransaction();
         try {
-            $brgy_id = auth()->user()->barangay_id;
+
             $data    = $request->validated();
+            $brgy_id = auth()->user()->barangay_id ?? $data['barangay_id'];
             //dd($data);
             $year = $data['year'] ?? session('cra_year');
             $cra = CommunityRiskAssessment::where('year', $year)->first();
@@ -968,12 +971,80 @@ class CRAController extends Controller
             $progressReport = $this->computeProgress($data);
 
             // Save numeric percentage to DB (make sure your column can hold 100)
-            CRAProgress::updateOrCreate(
-                ['barangay_id' => $brgy_id, 'cra_id' => $cra->id],
-                ['percentage' => $progressReport['percentage'], 'submitted_at' => now()]
+            // CRAProgress::updateOrCreate(
+            //     ['barangay_id' => $brgy_id, 'cra_id' => $cra->id],
+            //     ['percentage' => $progressReport['percentage'], 'submitted_at' => now()]
+            // );
+            $existing = CRAProgress::where('barangay_id', $brgy_id)
+                ->where('cra_id', $cra->id)
+                ->first();
+
+            $oldPercentage = $existing?->percentage ?? 0;
+            $oldSubmittedAt = optional(
+                $existing?->submitted_at
+                    ? \Carbon\Carbon::parse($existing->submitted_at)
+                    : null
+            )->format('Y-m-d H:i:s');
+
+            $craProgress = CRAProgress::updateOrCreate(
+                [
+                    'barangay_id' => $brgy_id,
+                    'cra_id' => $cra->id
+                ],
+                [
+                    'percentage' => $progressReport['percentage'],
+                    'submitted_at' => now()
+                ]
+            );
+
+            $user = auth()->user();
+            $action = $existing ? 'UPDATE' : 'CREATE';
+
+            $targetBarangayId = $brgy_id;
+            $description = $existing
+                ? "Updated CRA {$cra->year}"
+                : "Created CRA {$cra->year}";
+
+            $details = [
+                // 🔹 WHO
+                'user'        => $user->username,
+                'role'        => $user->role,
+
+                // 🔹 WHERE / TARGET
+                'barangay'    => $targetBarangayId,
+
+                // 🔹 WHAT
+                'cra_id'      => $cra->id,
+                'year'        => $cra->year,
+                'progress_id' => $craProgress->id,
+
+                // 🔹 CHANGE
+                'progress'    => $existing
+                    ? "{$oldPercentage}% → {$craProgress->percentage}%"
+                    : "{$craProgress->percentage}%",
+
+                // 🔹 TIMING
+                'submitted_at' => optional($craProgress->submitted_at)
+                    ->format('Y-m-d H:i:s'),
+
+                // 🔹 OPTIONAL CONTEXT
+                'action_type' => $action,
+            ];
+
+            ActivityLogHelper::log(
+                'CRA',
+                $action,
+                $description,
+                $targetBarangayId,
+                $details
             );
 
             //dd("Saved Successfully 🚀 CRA Progress: { $progressReport[percentage]}%");
+            if($user->role == 'cdrrmo_admin'){
+                return redirect()
+                    ->route('barangay-cra.index')
+                    ->with('success', 'Community Risk Assessment (CRA) saved successfully!');
+            }
             return redirect()
                 ->route('cra.create', ['year' => $cra->year])
                 ->with('success', 'Community Risk Assessment (CRA) saved successfully!');

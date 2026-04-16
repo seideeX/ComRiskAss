@@ -55,6 +55,40 @@ import {
     Bolt,
     Logs,
     ListCheck,
+    History,
+    Settings2,
+    FileSearch,
+    LoaderCircle,
+    ClipboardPenLine,
+    UserCircle,
+    ClipboardList,
+    BarChart3,
+    Briefcase,
+    Hospital,
+    Landmark,
+    BadgeCheck,
+    ShieldAlert,
+    ShieldCheck,
+    AlertTriangle,
+    HousePlus,
+    Wheat,
+    RadioTower,
+    TriangleAlert,
+    Grid2x2,
+    Table2,
+    Eye,
+    Siren,
+    PackageCheck,
+    Boxes,
+    MapPinned,
+    ClipboardCheck,
+    Map,
+    UtensilsCrossed,
+    MapPin,
+    GitBranch,
+    Wrench,
+    BookUser,
+    BookCheck,
 } from "lucide-react";
 import {
     Sidebar,
@@ -248,6 +282,326 @@ export function AppSidebar({ auth }) {
         }
     }, [APP_URL, userRoles]);
 
+    // const items = [
+    //     {
+    //         title: "CDRRMO Dashboard",
+    //         url: "/cdrrmo_admin/dashboard",
+    //         icon: LayoutDashboard,
+    //         roles: ["cdrrmo_admin"],
+    //     },
+    //     {
+    //         title: "Admin Dashboard",
+    //         url: `/cdrrmo_admin/dashboard${user.barangay_id ? `?barangay_id=${user.barangay_id}` : ""}`,
+    //         icon: LayoutDashboard,
+    //         roles: ["admin"],
+    //     },
+    //     {
+    //         title: "Profile",
+    //         url: "/cdrrmo_admin/barangay_profile",
+    //         icon: UserPen,
+    //         roles: ["admin"],
+    //     },
+    //     {
+    //         title: "Barangay Accounts",
+    //         icon: FileStack,
+    //         roles: ["cdrrmo_admin"],
+    //         url: "/cdrrmo_admin/accounts",
+    //     },
+    //     {
+    //         title: "Barangay CRA's",
+    //         icon: FileStack,
+    //         roles: ["cdrrmo_admin"],
+    //         url: "/cdrrmo_admin/barangay-cra",
+    //     },
+    //     {
+    //         title: "Demographic Summary",
+    //         icon: FileStack,
+    //         roles: ["cdrrmo_admin"],
+    //         submenu: [
+    //             {
+    //                 title: "Population and Residence",
+    //                 url: "/cdrrmo_admin/population",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Livelihood Statistics",
+    //                 url: "/cdrrmo_admin/livelihood",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Household Services",
+    //                 url: "/cdrrmo_admin/services",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Buildings and other Infrastructures",
+    //                 url: "/cdrrmo_admin/infraFacilities",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Primary Facilities and Services ",
+    //                 url: "/cdrrmo_admin/primaryFacilities",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Inventory of Institutions",
+    //                 url: "/cdrrmo_admin/institutions",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Human Resources",
+    //                 url: "/cdrrmo_admin/humanResources",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Families At Risk",
+    //                 url: "/cdrrmo_admin/familiesatrisk",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Persons with Disabilities",
+    //                 url: "/cdrrmo_admin/disabilities",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Illnesses Statistics",
+    //                 url: "/cdrrmo_admin/illnessesstats",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         title: "Participartory Community Risk Assessment",
+    //         icon: FileStack,
+    //         roles: ["cdrrmo_admin"],
+    //         submenu: [
+    //             {
+    //                 title: "Disaster Population Impact",
+    //                 url: "/cdrrmo_admin/populationimpact",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Disaster Effect Impact",
+    //                 url: "/cdrrmo_admin/effectimpact",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Damage To Property",
+    //                 url: "/cdrrmo_admin/damageproperty",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Agricultural Damage",
+    //                 url: "/cdrrmo_admin/damageagri",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Disaster Lifelines",
+    //                 url: "/cdrrmo_admin/disasterlifelines",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Hazard Risks",
+    //                 url: "/cdrrmo_admin/hazardrisks",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Risk Assessment Matrix",
+    //                 url: "/cdrrmo_admin/riskmatrix",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Vulnerability Assessment Matrix",
+    //                 url: "/cdrrmo_admin/vulnerabilitymatrix",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Population Exposure",
+    //                 url: "/cdrrmo_admin/populationexposure",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Disaster Risk Population",
+    //                 url: "/cdrrmo_admin/disasterpopulation",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         title: "Inventories and Evcuations",
+    //         icon: FileStack,
+    //         roles: ["cdrrmo_admin"],
+    //         url: "#",
+    //         submenu: [
+    //             {
+    //                 title: "Disaster and Hazard Inventory",
+    //                 url: "/cdrrmo_admin/disasterinventory",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Designated Evacuation Centers",
+    //                 url: "/cdrrmo_admin/evacuationcenters",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Inventory of Evacuation Centers",
+    //                 url: "/cdrrmo_admin/evacuationinven",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Places/Areas of Evacuation",
+    //                 url: "/cdrrmo_admin/affectedPlaces",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Livelihood Evacuation",
+    //                 url: "/cdrrmo_admin/livelihoodEvacuationSites",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Inventory of Prepositioned Food",
+    //                 url: "/cdrrmo_admin/prepositionedInventories",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Distribution Sites",
+    //                 url: "/cdrrmo_admin/reliefDistributions",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Distribution Process",
+    //                 url: "/cdrrmo_admin/reliefProcess",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Inventory of Trainings",
+    //                 url: "/cdrrmo_admin/bdrrmcTrainings",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "Inventory of Response Equipment ",
+    //                 url: "/cdrrmo_admin/equipmentInventories",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         title: "Barangay  Directories",
+    //         icon: FileStack,
+    //         roles: ["cdrrmo_admin"],
+    //         url: "#",
+    //         submenu: [
+    //             {
+    //                 title: "BDRRMC DIRECTORY",
+    //                 url: "/cdrrmo_admin/bdrrmcDirectories",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //             {
+    //                 title: "BARANGAY EVACUATION PLAN",
+    //                 url: "/cdrrmo_admin/evacuationPlans",
+    //                 icon: Table,
+    //                 roles: ["cdrrmo_admin"],
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         title: "Community Risk Assessment",
+    //         icon: Cloudy,
+    //         roles: ["barangay_officer", "admin"],
+    //         url: "#",
+    //         submenu: (() => {
+    //             if (!availableCra) {
+    //                 return [
+    //                     {
+    //                         title: "Loading years...",
+    //                         url: "#",
+    //                         icon: FileInput,
+    //                         roles: ["barangay_officer", "admin"],
+    //                         progress: 0,
+    //                     },
+    //                 ];
+    //             }
+
+    //             const filtered = availableCra.filter(
+    //                 (cra) =>
+    //                     !cra.barangay_id || cra.barangay_id === barangay?.id,
+    //             );
+
+    //             if (filtered.length === 0) {
+    //                 return [
+    //                     {
+    //                         title: "No CRA Available",
+    //                         url: "#",
+    //                         icon: FileInput,
+    //                         roles: ["barangay_officer", "admin"],
+    //                         progress: 0,
+    //                     },
+    //                 ];
+    //             }
+
+    //             return filtered.map((cra) => ({
+    //                 title: `Submit CRA ${cra.year}`,
+    //                 url: `/cra/create?year=${cra.year}`,
+    //                 icon: FileInput,
+    //                 roles: ["barangay_officer", "admin"],
+    //                 year: cra.year,
+    //                 progress: cra.percentage ?? 0,
+    //             }));
+    //         })(),
+    //     },
+    //     {
+    //         title: "CRA Settings",
+    //         icon: Settings,
+    //         roles: ["cdrrmo_admin", "admin"],
+    //         url: "#",
+    //         submenu: [
+    //             {
+    //                 title: "Selectfield",
+    //                 icon: SlidersHorizontal, // import this
+    //                 url: "/cra/selectfield", // or your actual route
+    //                 roles: ["cdrrmo_admin"], // make sure it matches your current user role
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         title: "Activity Logs",
+    //         url: "/cdrrmo_admin/activity_log",
+    //         icon: ListCheck,
+    //         roles: ["cdrrmo_admin"],
+    //     },
+    // ];
+
     const items = [
         {
             title: "CDRRMO Dashboard",
@@ -256,254 +610,254 @@ export function AppSidebar({ auth }) {
             roles: ["cdrrmo_admin"],
         },
         {
-            title: "City Admin Dashboard",
-            url: "/super_admin/dashboard",
-            icon: LayoutDashboard,
-            roles: ["super_admin"],
-        },
-        {
             title: "Admin Dashboard",
             url: `/cdrrmo_admin/dashboard${user.barangay_id ? `?barangay_id=${user.barangay_id}` : ""}`,
             icon: LayoutDashboard,
             roles: ["admin"],
         },
         {
+            title: "Profile",
+            url: "/cdrrmo_admin/barangay_profile",
+            icon: UserCircle,
+            roles: ["admin"],
+        },
+        {
             title: "Barangay Accounts",
-            icon: FileStack,
+            icon: Users,
             roles: ["cdrrmo_admin"],
             url: "/cdrrmo_admin/accounts",
         },
         {
             title: "Barangay CRA's",
-            icon: FileStack,
+            icon: ClipboardList,
             roles: ["cdrrmo_admin"],
             url: "/cdrrmo_admin/barangay-cra",
         },
         {
             title: "Demographic Summary",
-            icon: FileStack,
+            icon: BarChart3,
             roles: ["cdrrmo_admin"],
             submenu: [
                 {
                     title: "Population and Residence",
                     url: "/cdrrmo_admin/population",
-                    icon: Table,
+                    icon: Users,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Livelihood Statistics",
                     url: "/cdrrmo_admin/livelihood",
-                    icon: Table,
+                    icon: Briefcase,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Household Services",
                     url: "/cdrrmo_admin/services",
-                    icon: Table,
+                    icon: Home,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Buildings and other Infrastructures",
                     url: "/cdrrmo_admin/infraFacilities",
-                    icon: Table,
+                    icon: Building2,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Primary Facilities and Services ",
                     url: "/cdrrmo_admin/primaryFacilities",
-                    icon: Table,
+                    icon: Hospital,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Inventory of Institutions",
                     url: "/cdrrmo_admin/institutions",
-                    icon: Table,
+                    icon: Landmark,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Human Resources",
                     url: "/cdrrmo_admin/humanResources",
-                    icon: Table,
+                    icon: BadgeCheck,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Families At Risk",
                     url: "/cdrrmo_admin/familiesatrisk",
-                    icon: Table,
+                    icon: ShieldAlert,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Persons with Disabilities",
                     url: "/cdrrmo_admin/disabilities",
-                    icon: Table,
+                    icon: Accessibility,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Illnesses Statistics",
                     url: "/cdrrmo_admin/illnessesstats",
-                    icon: Table,
+                    icon: Stethoscope,
                     roles: ["cdrrmo_admin"],
                 },
             ],
         },
         {
             title: "Participartory Community Risk Assessment",
-            icon: FileStack,
+            icon: ShieldCheck,
             roles: ["cdrrmo_admin"],
             submenu: [
                 {
                     title: "Disaster Population Impact",
                     url: "/cdrrmo_admin/populationimpact",
-                    icon: Table,
+                    icon: UsersRound,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Disaster Effect Impact",
                     url: "/cdrrmo_admin/effectimpact",
-                    icon: Table,
+                    icon: AlertTriangle,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Damage To Property",
                     url: "/cdrrmo_admin/damageproperty",
-                    icon: Table,
+                    icon: HousePlus,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Agricultural Damage",
                     url: "/cdrrmo_admin/damageagri",
-                    icon: Table,
+                    icon: Wheat,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Disaster Lifelines",
                     url: "/cdrrmo_admin/disasterlifelines",
-                    icon: Table,
+                    icon: RadioTower,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Hazard Risks",
                     url: "/cdrrmo_admin/hazardrisks",
-                    icon: Table,
+                    icon: TriangleAlert,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Risk Assessment Matrix",
                     url: "/cdrrmo_admin/riskmatrix",
-                    icon: Table,
+                    icon: Grid2x2,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Vulnerability Assessment Matrix",
                     url: "/cdrrmo_admin/vulnerabilitymatrix",
-                    icon: Table,
+                    icon: Table2,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Population Exposure",
                     url: "/cdrrmo_admin/populationexposure",
-                    icon: Table,
+                    icon: Eye,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Disaster Risk Population",
                     url: "/cdrrmo_admin/disasterpopulation",
-                    icon: Table,
+                    icon: Siren,
                     roles: ["cdrrmo_admin"],
                 },
             ],
         },
         {
             title: "Inventories and Evcuations",
-            icon: FileStack,
+            icon: PackageCheck,
             roles: ["cdrrmo_admin"],
             url: "#",
             submenu: [
                 {
                     title: "Disaster and Hazard Inventory",
                     url: "/cdrrmo_admin/disasterinventory",
-                    icon: Table,
+                    icon: Boxes,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Designated Evacuation Centers",
                     url: "/cdrrmo_admin/evacuationcenters",
-                    icon: Table,
+                    icon: MapPinned,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Inventory of Evacuation Centers",
                     url: "/cdrrmo_admin/evacuationinven",
-                    icon: Table,
+                    icon: ClipboardCheck,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Places/Areas of Evacuation",
                     url: "/cdrrmo_admin/affectedPlaces",
-                    icon: Table,
+                    icon: Map,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Livelihood Evacuation",
                     url: "/cdrrmo_admin/livelihoodEvacuationSites",
-                    icon: Table,
+                    icon: BriefcaseBusiness,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Inventory of Prepositioned Food",
                     url: "/cdrrmo_admin/prepositionedInventories",
-                    icon: Table,
+                    icon: UtensilsCrossed,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Distribution Sites",
                     url: "/cdrrmo_admin/reliefDistributions",
-                    icon: Table,
+                    icon: MapPin,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Distribution Process",
                     url: "/cdrrmo_admin/reliefProcess",
-                    icon: Table,
+                    icon: GitBranch,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Inventory of Trainings",
                     url: "/cdrrmo_admin/bdrrmcTrainings",
-                    icon: Table,
+                    icon: GraduationCap,
                     roles: ["cdrrmo_admin"],
                 },
                 {
                     title: "Inventory of Response Equipment ",
                     url: "/cdrrmo_admin/equipmentInventories",
-                    icon: Table,
+                    icon: Wrench,
                     roles: ["cdrrmo_admin"],
                 },
             ],
         },
         {
             title: "Barangay  Directories",
-            icon: FileStack,
+            icon: BookUser,
             roles: ["cdrrmo_admin"],
             url: "#",
             submenu: [
                 {
-                    title: "BDRRMC DIRECTORY",
+                    title: "BDRRMC Directory",
                     url: "/cdrrmo_admin/bdrrmcDirectories",
-                    icon: Table,
+                    icon: BookCheck,
                     roles: ["cdrrmo_admin"],
                 },
                 {
-                    title: "BARANGAY EVACUATION PLAN",
+                    title: "Barangay Evacuation Plan",
                     url: "/cdrrmo_admin/evacuationPlans",
-                    icon: Table,
+                    icon: FileText,
                     roles: ["cdrrmo_admin"],
                 },
             ],
         },
         {
             title: "Community Risk Assessment",
-            icon: Cloudy,
+            icon: ClipboardPenLine,
             roles: ["barangay_officer", "admin"],
             url: "#",
             submenu: (() => {
@@ -512,7 +866,7 @@ export function AppSidebar({ auth }) {
                         {
                             title: "Loading years...",
                             url: "#",
-                            icon: FileInput,
+                            icon: LoaderCircle,
                             roles: ["barangay_officer", "admin"],
                             progress: 0,
                         },
@@ -529,7 +883,7 @@ export function AppSidebar({ auth }) {
                         {
                             title: "No CRA Available",
                             url: "#",
-                            icon: FileInput,
+                            icon: FileSearch,
                             roles: ["barangay_officer", "admin"],
                             progress: 0,
                         },
@@ -548,59 +902,23 @@ export function AppSidebar({ auth }) {
         },
         {
             title: "CRA Settings",
-            icon: Settings,
+            icon: Settings2,
             roles: ["cdrrmo_admin", "admin"],
             url: "#",
             submenu: [
                 {
                     title: "Selectfield",
-                    icon: SlidersHorizontal, // import this
-                    url: "/cra/selectfield", // or your actual route
-                    roles: ["cdrrmo_admin"], // make sure it matches your current user role
+                    icon: SlidersHorizontal,
+                    url: "/cra/selectfield",
+                    roles: ["cdrrmo_admin"],
                 },
             ],
         },
         {
-            title: "Certificate Issuance",
-            icon: FileStack,
-            roles: ["resident"],
-            url: "/account/certificates",
-        },
-        {
-            title: "Basic Information",
-            icon: UserSquare,
-            roles: ["resident", "barangay_officer"],
-            url: "/account/user/basic-information",
-        },
-        {
-            title: "Barangay Accounts",
-            url: "/super_admin/accounts",
-            icon: CircleUserRound,
-            roles: ["super_admin"],
-        },
-        {
-            title: "List of Barangays",
-            url: "/super_admin/barangay",
-            icon: LayoutList,
-            roles: ["super_admin"],
-        },
-        {
-            title: "Population Summary",
-            url: "/super_admin/statistics/population-summary",
-            icon: Users,
-            roles: ["super_admin"],
-        },
-        {
-            title: "Employment Summary",
-            url: "/super_admin/statistics/employment-summary",
-            icon: Users,
-            roles: ["super_admin"],
-        },
-        {
             title: "Activity Logs",
-            url: "/activity_log",
-            icon: ListCheck,
-            roles: ["super_admin"],
+            url: "/cdrrmo_admin/activity_log",
+            icon: History,
+            roles: ["cdrrmo_admin"],
         },
     ];
 
