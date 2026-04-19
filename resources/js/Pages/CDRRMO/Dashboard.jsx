@@ -150,7 +150,7 @@ export default function Dashboard({
         {
             title: "Vulnerability Assessment Summary",
             icon: <AlertCircle className="w-6 h-6 text-pink-500" />,
-            routeName: "vulnerabilityassessment.summary.pdf",
+            routeName: "cdrrmo_admin/cra/vulnerability-assessment-summary/pdf",
             color: "bg-pink-100",
             description: "Detailed vulnerability analysis and reports",
         },
