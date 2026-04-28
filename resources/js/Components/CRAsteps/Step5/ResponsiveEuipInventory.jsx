@@ -43,16 +43,19 @@ const ResponsiveEuipInventory = () => {
 
     // Initialize table in StepperContext with default items
     useEffect(() => {
-        if (!craData.equipment_inventory) {
-            setCraData({
-                ...craData,
+        if (
+            !craData.equipment_inventory ||
+            craData.equipment_inventory.length === 0
+        ) {
+            setCraData((prev) => ({
+                ...prev,
                 equipment_inventory: EQUIPMENT_ITEMS.map((item) => ({
                     ...ROW_TEMPLATE,
                     item,
                 })),
-            });
+            }));
         }
-    }, []);
+    }, [craData.equipment_inventory]);
 
     const rows = craData.equipment_inventory || [];
 

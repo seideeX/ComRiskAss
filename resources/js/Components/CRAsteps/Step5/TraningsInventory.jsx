@@ -44,16 +44,18 @@ const TrainingsInventory = () => {
 
     // Initialize table in stepper with default titles
     useEffect(() => {
-        if (!craData.trainings_inventory) {
-            setCraData({
-                ...craData,
+        if (!craData.trainings_inventory ||
+            craData.trainings_inventory.length === 0
+        ) {
+            setCraData((prev) => ({
+                ...prev,
                 trainings_inventory: TRAINING_TITLES.map((t) => ({
                     ...ROW_TEMPLATE,
-                    title: t,
+                    t,
                 })),
-            });
+            }));
         }
-    }, []);
+    }, [craData.trainings_inventory]);
 
     const rows = craData.trainings_inventory || [];
 
@@ -157,8 +159,8 @@ const TrainingsInventory = () => {
                                             <button
                                                 onClick={() => updateCell(idx, "applies", "yes")}
                                                 className={`p-1 rounded-full ${row.applies === "yes"
-                                                        ? "bg-green-500 text-white"
-                                                        : "bg-gray-200 text-gray-500"
+                                                    ? "bg-green-500 text-white"
+                                                    : "bg-gray-200 text-gray-500"
                                                     }`}
                                             >
                                                 <Check size={14} />
@@ -166,8 +168,8 @@ const TrainingsInventory = () => {
                                             <button
                                                 onClick={() => updateCell(idx, "applies", "no")}
                                                 className={`p-1 rounded-full ${row.applies === "no"
-                                                        ? "bg-red-500 text-white"
-                                                        : "bg-gray-200 text-gray-500"
+                                                    ? "bg-red-500 text-white"
+                                                    : "bg-gray-200 text-gray-500"
                                                     }`}
                                             >
                                                 <X size={14} />

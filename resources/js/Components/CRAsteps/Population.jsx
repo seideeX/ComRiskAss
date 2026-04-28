@@ -5,7 +5,7 @@ import Accordion from "../Accordion";
 import Livelihood from "./Livelihood";
 import Building from "./Building";
 import InstitutionHuman from "./InstitutionHuman";
-
+import { AlertTriangle } from "lucide-react";
 export default function Population() {
     const { craData, setCraData } = useContext(StepperContext);
 
@@ -158,6 +158,38 @@ export default function Population() {
         }
     }, []); // run only once
 
+    const grandTotal = getGrandTotal();
+    const barangayTotal = craData.barangayPopulation || 0;
+
+    const isPopulationMismatch =
+        barangayTotal !== 0 && grandTotal !== barangayTotal;
+
+    const lgbtTableTotal = getColumnTotal("lgbtq_no_dis");
+    const lgbtPopulation =
+        craData.populationGender?.find((g) => g.gender === "lgbtq")?.value || 0;
+
+    const isLgbtMismatch =
+        lgbtPopulation !== 0 && lgbtTableTotal !== lgbtPopulation;
+
+    const maleTableTotal =
+        getColumnTotal("male_no_dis") + getColumnTotal("male_dis");
+
+    const malePopulation =
+        craData.populationGender?.find((g) => g.gender === "male")?.value || 0;
+
+    const isMaleMismatch =
+        malePopulation !== 0 && maleTableTotal !== malePopulation;
+
+
+    const femaleTableTotal =
+        getColumnTotal("female_no_dis") + getColumnTotal("female_dis");
+
+    const femalePopulation =
+        craData.populationGender?.find((g) => g.gender === "female")?.value || 0;
+
+    const isFemaleMismatch =
+        femalePopulation !== 0 && femaleTableTotal !== femalePopulation;
+
     return (
         <div className="space-y-4">
             <Accordion title="A. Information on Population and Resident">
@@ -281,72 +313,78 @@ export default function Population() {
                                 <th rowSpan="2" className="border px-2 py-1">
                                     Age Group
                                 </th>
+
                                 <th colSpan="2" className="border px-2 py-1">
                                     Male
                                 </th>
+
                                 <th colSpan="2" className="border px-2 py-1">
                                     Female
                                 </th>
-                                <th colSpan="2" className="border px-2 py-1">
+                                <th rowSpan="2" className="border px-2 py-1">
                                     LGBTQ+
                                 </th>
+
                                 <th rowSpan="2" className="border px-2 py-1">
                                     Total
                                 </th>
                             </tr>
+
                             <tr>
-                                <th className="border px-2 py-1">
-                                    Without Disability
-                                </th>
-                                <th className="border px-2 py-1">
-                                    With Disability
-                                </th>
-                                <th className="border px-2 py-1">
-                                    Without Disability
-                                </th>
-                                <th className="border px-2 py-1">
-                                    With Disability
-                                </th>
-                                <th className="border px-2 py-1">
-                                    Without Disability
-                                </th>
-                                <th className="border px-2 py-1">
-                                    With Disability
-                                </th>
+                                <th className="border px-2 py-1">Without Disability</th>
+                                <th className="border px-2 py-1">With Disability</th>
+
+                                <th className="border px-2 py-1">Without Disability</th>
+                                <th className="border px-2 py-1">With Disability</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {craData.population?.map((groupObj, idx) => (
-                                <tr key={idx}>
-                                    <td className="border px-2 py-1">{formatAgeGroup(groupObj.ageGroup)}</td>
-                                    {Object.keys(groupObj)
-                                        .filter((key) => key !== "ageGroup")
-                                        .map((field, i) => (
-                                            <td
-                                                key={i}
-                                                className="border px-2 py-1"
-                                            >
-                                                <input
-                                                    type="number"
-                                                    className="w-full border p-1 text-center"
-                                                    value={
-                                                        groupObj[field] ?? ""
-                                                    }
-                                                    onChange={(e) =>
-                                                        updatePopulation(
-                                                            idx,
-                                                            field,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            </td>
-                                        ))}
-                                    <td className="border px-2 py-1 font-semibold text-center bg-gray-50">
-                                        {getRowTotal(idx)}
-                                    </td>
-                                </tr>
-                            ))}
+                            {ageGroups.map((ageKey, idx) => {
+                                const groupObj = craData.population?.find(
+                                    (p) => p.ageGroup === ageKey
+                                ) || {
+                                    ageGroup: ageKey,
+                                    male_no_dis: "",
+                                    male_dis: "",
+                                    female_no_dis: "",
+                                    female_dis: "",
+                                    lgbtq_no_dis: "",
+                                    lgbtq_dis: "",
+                                };
+
+                                return (
+                                    <tr key={ageKey}>
+                                        <td className="border px-2 py-1">
+                                            {formatAgeGroup(groupObj.ageGroup)}
+                                        </td>
+
+                                        {Object.keys(groupObj)
+                                            .filter((key) => key !== "ageGroup")
+                                            .map((field, i, arr) => {
+
+                                                // skip rendering lgbtq_dis column visually
+                                                if (field === "lgbtq_dis") return null;
+
+                                                return (
+                                                    <td key={i} className="border px-2 py-1">
+                                                        <input
+                                                            type="number"
+                                                            className="w-full border p-1 text-center"
+                                                            value={groupObj[field] ?? ""}
+                                                            onChange={(e) =>
+                                                                updatePopulation(idx, field, e.target.value)
+                                                            }
+                                                        />
+                                                    </td>
+                                                );
+                                            })}
+
+                                        <td className="border px-2 py-1 font-semibold text-center bg-gray-50">
+                                            {getRowTotal(idx)}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                         <tfoot>
                             <tr className="bg-gray-100 font-semibold">
@@ -368,15 +406,50 @@ export default function Population() {
                                 <td className="border px-2 py-1 text-center">
                                     {getColumnTotal("lgbtq_no_dis")}
                                 </td>
-                                <td className="border px-2 py-1 text-center">
+                                {/* <td className="border px-2 py-1 text-center">
                                     {getColumnTotal("lgbtq_dis")}
-                                </td>
+                                </td> */}
                                 <td className="border px-2 py-1 text-center">
                                     {getGrandTotal()}
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
+                    <div className="space-y-2 mb-2">
+                        {isPopulationMismatch && (
+                            <div className="flex items-center gap-2 text-sm text-red-600 font-semibold bg-red-50 border border-red-200 px-3 py-2 rounded">
+                                <AlertTriangle className="w-4 h-4" />
+                                <span>
+                                    Grand total ({grandTotal}) does not match Barangay Population ({barangayTotal}).
+                                </span>
+                            </div>
+                        )}
+
+                        {isLgbtMismatch && (
+                            <div className="flex items-center gap-2 text-sm text-red-600 font-semibold bg-red-50 border border-red-200 px-3 py-2 rounded">
+                                <AlertTriangle className="w-4 h-4" />
+                                <span>
+                                    LGBTQ+ total ({lgbtTableTotal}) does not match LGBTQ+ Population ({lgbtPopulation}).
+                                </span>
+                            </div>
+                        )}
+                        {isMaleMismatch && (
+                            <div className="flex items-center gap-2 text-sm text-red-600 font-semibold bg-red-50 border border-red-200 px-3 py-2 rounded">
+                                <AlertTriangle className="w-4 h-4" />
+                                <span>
+                                    Male total ({maleTableTotal}) does not match Male Population ({malePopulation}).
+                                </span>
+                            </div>
+                        )}
+                        {isFemaleMismatch && (
+                            <div className="flex items-center gap-2 text-sm text-red-600 font-semibold bg-red-50 border border-red-200 px-3 py-2 rounded">
+                                <AlertTriangle className="w-4 h-4" />
+                                <span>
+                                    Female total ({femaleTableTotal}) does not match Female Population ({femalePopulation}).
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </section>
 
                 {/* Houses Section (Side by Side, Same Height) */}

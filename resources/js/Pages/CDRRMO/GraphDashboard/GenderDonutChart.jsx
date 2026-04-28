@@ -38,7 +38,9 @@ const GenderDonutChart = ({ genderData }) => {
         value: dataMap[gender] || 0
     }));
 
-    const totalQuantity = chartData.reduce((sum, entry) => sum + entry.value, 0);
+    const totalQuantity = chartData
+        .filter(entry => entry.name !== 'LGBTQ+')
+        .reduce((sum, entry) => sum + entry.value, 0);
 
     // Custom Tooltip
     const CustomTooltip = ({ active, payload }) => {

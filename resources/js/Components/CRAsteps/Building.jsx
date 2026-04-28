@@ -6,88 +6,6 @@ import React from "react";
 import { toTitleCase } from "@/utils/stringFormat";
 import { defaultFacilities, defaultBuildings } from "./defaults";
 
-// ------------------------------------------------------
-// Default Building Data
-// const defaultBuildings = [
-//     {
-//         category: "Health and Medical Facilities",
-//         rows: [
-//             { type: "Evacuation Center", households: "" },
-//             { type: "Flood Control", households: "" },
-//             { type: "Rain Water Harvester (Communal)", households: "" },
-//             { type: "Barangay Disaster Operation Center", households: "" },
-//             { type: "Public Comfort Room/Toilet", households: "" },
-//             { type: "Community Garden", households: "" },
-//             { type: "Barangay Health Center", households: "" },
-//             { type: "Hospital", households: "" },
-//             { type: "Maternity Clinic", households: "" },
-//             { type: "Barangay Drug Store", households: "" },
-//             { type: "City/Municipal Public Drug Store", households: "" },
-//             { type: "Private Drug Store", households: "" },
-//             { type: "Quarantine/Isolation Facility", households: "" },
-//         ],
-//     },
-//     {
-//         category: "Education Facilities",
-//         rows: [
-//             { type: "Child Development Center", households: "" },
-//             { type: "Preschool", households: "" },
-//             { type: "Elementary", households: "" },
-//             { type: "Secondary", households: "" },
-//             { type: "Vocational", households: "" },
-//             { type: "College/University", households: "" },
-//             { type: "Islamic School", households: "" },
-//         ],
-//     },
-//     {
-//         category: "Agricultural Facilities",
-//         rows: [
-//             { type: "Rice Mill", households: "" },
-//             { type: "Corn Mill", households: "" },
-//             { type: "Feed Mill", households: "" },
-//             { type: "Agriculture Produce Market", households: "" },
-//         ],
-//     },
-// ];
-
-// const defaultFacilities = [
-//     {
-//         category: "Facilities and Services",
-//         rows: [
-//             { type: "Multi-Purposes Hall", quantity: "" },
-//             { type: "Barangay Women and Chidren Protection Desk", quantity: "" },
-//             { type: "Barangay Tanonds and Barangay Peacekeeping Action Teams Post", quantity: "" },
-//             { type: "Bureau of Jail Management and Penology", quantity: "" },
-//             { type: "Philippine National Police Outpost", quantity: "" },
-//             { type: "Bank", quantity: "" },
-//             { type: "Post Office", quantity: "" },
-//             { type: "Market", quantity: "" },
-//         ],
-//     },
-//     {
-//         category: "Public Transportation",
-//         rows: [
-//             { type: "Bus", quantity: "" },
-//             { type: "Taxi", quantity: "" },
-//             { type: "Van/FX", quantity: "" },
-//             { type: "Jeepney", quantity: "" },
-//             { type: "Tricyle", quantity: "" },
-//             { type: "Pedicab", quantity: "" },
-//             { type: "Boat", quantity: "" },
-//         ],
-//     },
-//     {
-//         category: "Road Types",
-//         rows: [
-//             { type: "Concrete", length: "", maintained_by: "" },
-//             { type: "Asphalt", length: "", maintained_by: "" },
-//             { type: "Gravel", length: "", maintained_by: "" },
-//             { type: "Natural Earth Surface", length: "", maintained_by: "" },
-
-//         ],
-//     },
-
-// ];
 
 // ------------------------------------------------------
 // Building Table Component
@@ -286,12 +204,12 @@ export default function Buildings() {
         setCraData((prev) => {
             const updated = { ...prev };
 
-            // 🔹 Always ensure these sections exist with defaults
-            if (!updated.buildings || updated.buildings.length === 0) {
+            // ✅ FIX: stronger condition
+            if (!updated.buildings || updated.buildings.length === 0 || !updated.buildings[0]?.rows) {
                 updated.buildings = JSON.parse(JSON.stringify(defaultBuildings));
             }
 
-            if (!updated.facilities || updated.facilities.length === 0) {
+            if (!updated.facilities || updated.facilities.length === 0 || !updated.facilities[0]?.rows) {
                 updated.facilities = JSON.parse(JSON.stringify(defaultFacilities));
             }
 
@@ -299,14 +217,6 @@ export default function Buildings() {
         });
     }, [setCraData]);
 
-
-
-    // Initialize with defaultFacilities using useCallback for memoization
-    useEffect(() => {
-        if (!craData.facilities || craData.facilities.length === 0) {
-            setCraData((prev) => ({ ...prev, facilities: JSON.parse(JSON.stringify(defaultFacilities)) }));
-        }
-    }, [craData.facilities, setCraData]);
 
     // ---------------- Building row helpers ----------------
     const updateBuildingRow = useCallback((catIdx, rowIdx, field, value) => {
@@ -502,6 +412,18 @@ export default function Buildings() {
         });
     }, [setCraData]);
 
+    const isValidBuildings =
+        Array.isArray(craData.buildings) &&
+        craData.buildings.length > 0 &&
+        craData.buildings.some(cat => Array.isArray(cat.rows) && cat.rows.length > 0);
+
+    const isValidFacilities =
+        Array.isArray(craData.facilities) &&
+        craData.facilities.length > 0 &&
+        craData.facilities.some(cat => Array.isArray(cat.rows) && cat.rows.length > 0);
+
+    const buildingsData = isValidBuildings ? craData.buildings : defaultBuildings;
+    const facilitiesData = isValidFacilities ? craData.facilities : defaultFacilities;
     return (
         <div className="space-y-4">
             <Accordion title="D. Buildings and other Facilities in the Barangay">
@@ -509,7 +431,7 @@ export default function Buildings() {
                     <strong>Note:</strong> Leave a cell blank if the value is zero. Default building types cannot be removed or edited.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {craData.buildings?.map((cat, idx) => (
+                    {buildingsData.map((cat, idx) => (
                         <BuildingTable
                             key={idx}
                             category={cat}
@@ -528,7 +450,7 @@ export default function Buildings() {
                     <strong>Note:</strong> Leave a cell blank if the value is zero. Default facility types cannot be removed or edited.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {craData.facilities?.slice(0, 2).map((cat, idx) => (
+                    {facilitiesData.slice(0, 2).map((cat, idx) => (
                         <FacilitiesServicesTable
                             key={idx}
                             category={cat}
@@ -542,9 +464,9 @@ export default function Buildings() {
 
 
                     <div className="md:col-span-2">
-                        {craData.facilities?.[2] && ( // Check if the category exists before rendering
+                        {facilitiesData[2] && ( // Check if the category exists before rendering
                             <FacilitiesServicesTable
-                                category={craData.facilities[2]}
+                                category={facilitiesData[2]}
                                 catIdx={2}
                                 defaultCategoryRows={defaultFacilities[2].rows} // Pass defaults for comparison
                                 updateRow={updateFacilityRow}

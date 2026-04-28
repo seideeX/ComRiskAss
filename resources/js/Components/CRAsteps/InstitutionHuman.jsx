@@ -273,11 +273,16 @@ function InstitutionsTable({ institutions, instIdx, updateField, removeInstituti
 const InstitutionHuman = () => {
     const { craData, setCraData } = useContext(StepperContext);
 
+    const humanResources = craData.human_resources ?? defaultHumanResources;
+
     useEffect(() => {
-        if (!craData.human_resources) {
-            setCraData((prev) => ({ ...prev, human_resources: defaultHumanResources }));
-        }
-    }, [craData, setCraData]);
+        setCraData((prev) => {
+            if (!prev.human_resources || prev.human_resources.length === 0) {
+                return { ...prev, human_resources: defaultHumanResources };
+            }
+            return prev;
+        });
+    }, [setCraData]);
 
     const updateCategoryName = (catIdx, val) => {
         const updated = [...craData.human_resources];
@@ -350,6 +355,8 @@ const InstitutionHuman = () => {
         toast.error(`${removedName} removed!`);
     };
 
+
+
     return (
         <div className="space-y-4">
             <Accordion title="F. Inventory of Institutions, Sectors, and other Volunteer Groups in the Barangay">
@@ -368,7 +375,7 @@ const InstitutionHuman = () => {
                     <strong>Note:</strong> Leave a cell blank if the value is zero.
                 </p>
                 <div className="mb-10 border-2 border-purple-300 rounded-xl p-5 bg-purple-50 shadow-sm">
-                    {(craData.human_resources || []).map((cat, i) => (
+                    {humanResources.map((cat, i) => (
                         <HumanResourcesTable
                             key={i}
                             category={cat}
