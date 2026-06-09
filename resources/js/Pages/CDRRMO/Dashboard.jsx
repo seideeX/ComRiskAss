@@ -289,15 +289,18 @@ export default function Dashboard({
 
                                 <div className="lg:col-span-3 flex flex-col items-center gap-2">
                                     <div className="w-full max-w-full">
-                                        <TopBarangaysList
-                                            data={topBarangays}
-                                            selectedBarangayId={
-                                                selectedBarangay
-                                            }
-                                            year={
-                                                props.session?.cra_year || null
-                                            }
-                                        />
+                                        {isAdmin && (
+                                            <TopBarangaysList
+                                                data={topBarangays}
+                                                selectedBarangayId={
+                                                    selectedBarangay
+                                                }
+                                                year={
+                                                    props.session?.cra_year ||
+                                                    null
+                                                }
+                                            />
+                                        )}
                                     </div>
                                     <div className="w-full max-w-full">
                                         <GenderDonutChart
