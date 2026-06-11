@@ -102,7 +102,7 @@ export default function Index({ progress, barangay_id }) {
 
     const { props } = usePage();
     const { success, error, craData: craDataFromServer } = props;
-    console.log(craDataFromServer);
+    //console.log(craDataFromServer);
     const steps = useMemo(
         () => [
             "Barangay Resource Profile",
